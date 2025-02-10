@@ -1,0 +1,89 @@
+:root {
+    --background-colour: #fff8f0ff;
+    --text-colour: #1c2826ff;
+    --primary-colour: #ff9505ff;
+    --secondary-colour: #d81e5bff;
+    --tertiary-colour: #8963baff;
+}
+
+body {
+    background-color: var(--background-colour);
+    color: var(--text-colour);
+    font-size: 1.5rem;
+    font-family: "Noto Sans", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Noto Serif", serif;
+    font-weight: bold;
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+h1.title {
+    font-size: 4rem;
+    font-weight: black;
+}
+
+h2 {
+    font-size: 2.5rem;
+}
+
+h3 {
+    font-size: 2rem;
+}
+
+h4 {
+    font-size: 1.5rem;
+}
+
+h5 {
+    font-size: 1.25rem;
+}
+
+h6 {
+    font-size: 1rem;
+}
+
+a {
+    color: var(--primary-colour);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--secondary-colour);
+}
+
+a:active {
+    color: var(--tertiary-colour);
+}
+
+a:visited {
+    color: var(--tertiary-colour);
+}
+
+a:link {
+    color: var(--primary-colour);
+}
+
+a.logo {
+    padding: 0.2rem;
+}
+
+img.logo {
+    height: 2rem;
+}
+
+.bh {
+    color: var(--primary-colour);
+    size: 0.5rem;
+    opacity: 0.25;
+    padding-top: 0.5rem;
+}
