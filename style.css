@@ -81,9 +81,26 @@ img.logo {
     height: 2rem;
 }
 
+img.qr {
+    height: 16rem;
+}
+
+button {
+    border: none;
+    width: fit-content;
+    height: fit-content;
+    padding: 0.2rem;
+    background: none;
+}
+
 .bh {
     color: var(--primary-colour);
     size: 0.5rem;
     opacity: 0.25;
     padding-top: 0.5rem;
+}
+
+.btc {
+    word-wrap: break-word;
+    display: none;
 }
