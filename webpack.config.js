@@ -6,18 +6,24 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const PurgeCSSPlugin = require('purgecss-webpack-plugin')
 const globAll = require('glob-all')
+const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
 
 module.exports = {
     mode: 'development',
     entry: './src/js/main.js',
     output: {
         filename: 'main.js',
-        path: path.resolve(process.cwd(), 'docs'),
+        path: path.resolve(__dirname, 'docs'),
+        clean: true
     },
+    devtool: 'source-map',
     devServer: {
-        static: path.resolve(process.cwd(), 'docs'),
+        static: path.resolve(__dirname, 'docs'),
         port: 8080,
         hot: true
+    },
+    performance: {
+        hints: false
     },
     plugins: [
         new HtmlWebpackPlugin({ template: './src/index.html', minify: 'auto' }),
@@ -29,6 +35,10 @@ module.exports = {
                 `${path.join(process.cwd(), 'src')}/**/*.scss`
             ]),
         }),
+        new PreloadWebpackPlugin({
+            rel: 'preload',
+            include: 'allAssets'
+        })
     ],
     module: {
         rules: [
