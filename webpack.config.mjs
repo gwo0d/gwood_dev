@@ -5,7 +5,7 @@ import autoprefixer from 'autoprefixer'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import miniCssExtractPlugin from 'mini-css-extract-plugin'
 import { PurgeCSSPlugin } from 'purgecss-webpack-plugin'
-import * as glob from 'glob'
+import { globSync } from 'glob'
 
 export default {
     mode: 'development',
@@ -23,7 +23,7 @@ export default {
         new HtmlWebpackPlugin({ template: './src/index.html', minify: 'auto' }),
         new miniCssExtractPlugin(),
         new PurgeCSSPlugin({
-            paths: glob.sync(`${path.join(process.cwd(), 'src')}/**/*`, { nodir: true }),
+            paths: globSync(`${path.join(process.cwd(), 'src')}/**/*`, { nodir: true }),
         }),
     ],
     module: {
