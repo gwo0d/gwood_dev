@@ -4,8 +4,8 @@ const path = require('path')
 const autoprefixer = require('autoprefixer')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const { PurgeCSSPlugin } = require('purgecss-webpack-plugin')
-const globAll = require('glob-all') // <-- changed from glob
+const PurgeCSSPlugin = require('purgecss-webpack-plugin')
+const globAll = require('glob-all')
 
 module.exports = {
     mode: 'development',
