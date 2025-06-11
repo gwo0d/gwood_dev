@@ -1,13 +1,13 @@
 'use strict'
 
-import path from 'path'
-import autoprefixer from 'autoprefixer'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
-import miniCssExtractPlugin from 'mini-css-extract-plugin'
-import { PurgeCSSPlugin } from 'purgecss-webpack-plugin'
-import { globSync } from 'glob'
+const path = require('path')
+const autoprefixer = require('autoprefixer')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const { PurgeCSSPlugin } = require('purgecss-webpack-plugin')
+const glob = require('glob')
 
-export default {
+module.exports = {
     mode: 'development',
     entry: './src/js/main.js',
     output: {
@@ -21,9 +21,9 @@ export default {
     },
     plugins: [
         new HtmlWebpackPlugin({ template: './src/index.html', minify: 'auto' }),
-        new miniCssExtractPlugin(),
+        new MiniCssExtractPlugin(),
         new PurgeCSSPlugin({
-            paths: globSync(`${path.join(process.cwd(), 'src')}/**/*`, { nodir: true }),
+            paths: glob.sync(`${path.join(process.cwd(), 'src')}/**/*`, { nodir: true }),
         }),
     ],
     module: {
@@ -32,7 +32,7 @@ export default {
                 test: /\.(scss)$/,
                 use: [
                     {
-                        loader: miniCssExtractPlugin.loader
+                        loader: MiniCssExtractPlugin.loader
                     },
                     {
                         loader: 'css-loader'
