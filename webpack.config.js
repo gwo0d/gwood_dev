@@ -1,22 +1,21 @@
 'use strict'
 
-const path = require('path')
-const autoprefixer = require('autoprefixer')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const miniCssExtractPlugin = require('mini-css-extract-plugin')
-const { PurgeCSSPlugin } = require('purgecss-webpack-plugin')
+import path from 'path'
+import autoprefixer from 'autoprefixer'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import miniCssExtractPlugin from 'mini-css-extract-plugin'
+import { PurgeCSSPlugin } from 'purgecss-webpack-plugin'
+import * as glob from 'glob'
 
-const glob = require('glob')
-
-module.exports = {
+export default {
     mode: 'development',
     entry: './src/js/main.js',
     output: {
         filename: 'main.js',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(process.cwd(), 'dist'),
     },
     devServer: {
-        static: path.resolve(__dirname, 'dist'),
+        static: path.resolve(process.cwd(), 'dist'),
         port: 8080,
         hot: true
     },
@@ -24,7 +23,7 @@ module.exports = {
         new HtmlWebpackPlugin({ template: './src/index.html', minify: 'auto' }),
         new miniCssExtractPlugin(),
         new PurgeCSSPlugin({
-            paths: glob.sync(`${path.join(__dirname, 'src')}/**/*`, { nodir: true }),
+            paths: glob.sync(`${path.join(process.cwd(), 'src')}/**/*`, { nodir: true }),
         }),
     ],
     module: {
@@ -33,15 +32,12 @@ module.exports = {
                 test: /\.(scss)$/,
                 use: [
                     {
-                        // Extracts CSS for each JS file that includes CSS
                         loader: miniCssExtractPlugin.loader
                     },
                     {
-                        // Interprets `@import` and `url()` like `import/require()` and will resolve them
                         loader: 'css-loader'
                     },
                     {
-                        // Loader for webpack to process CSS with PostCSS
                         loader: 'postcss-loader',
                         options: {
                             postcssOptions: {
@@ -52,11 +48,9 @@ module.exports = {
                         }
                     },
                     {
-                        // Loads a SASS/SCSS file and compiles it to CSS
                         loader: 'sass-loader',
                         options: {
                             sassOptions: {
-                                // Silence Sass deprecation warnings
                                 silenceDeprecations: [
                                     'mixed-decls',
                                     'color-functions',
