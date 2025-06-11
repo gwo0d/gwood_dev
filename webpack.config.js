@@ -5,7 +5,7 @@ const autoprefixer = require('autoprefixer')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { PurgeCSSPlugin } = require('purgecss-webpack-plugin')
-const glob = require('glob')
+const globAll = require('glob-all') // <-- changed from glob
 
 module.exports = {
     mode: 'development',
@@ -23,7 +23,11 @@ module.exports = {
         new HtmlWebpackPlugin({ template: './src/index.html', minify: 'auto' }),
         new MiniCssExtractPlugin(),
         new PurgeCSSPlugin({
-            paths: glob.sync(`${path.join(process.cwd(), 'src')}/**/*`, { nodir: true }),
+            paths: globAll.sync([
+                `${path.join(process.cwd(), 'src')}/**/*.js`,
+                `${path.join(process.cwd(), 'src')}/**/*.html`,
+                `${path.join(process.cwd(), 'src')}/**/*.scss`
+            ]),
         }),
     ],
     module: {
