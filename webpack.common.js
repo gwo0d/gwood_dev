@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
 const autoprefixer = require('autoprefixer');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './src/js/main.js',
@@ -20,6 +21,11 @@ module.exports = {
     new PreloadWebpackPlugin({
         rel: 'preload',
         include: 'allAssets'
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'src/assets/favicon', to: 'favicon' }
+      ]
     })
   ],
   module: {
