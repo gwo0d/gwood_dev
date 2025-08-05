@@ -19,8 +19,16 @@ module.exports = {
       chunkFilename: '[id].css'
     }),
     new PreloadWebpackPlugin({
-        rel: 'preload',
-        include: 'allAssets'
+      rel: 'preload',
+      include: 'allAssets',
+      fileWhitelist: [/\.js$/, /\.css$/],
+      fileBlacklist: [
+        /favicon\//,
+        /\.ico$/,
+        /\.png$/,
+        /\.svg$/,
+        /\.webmanifest$/
+      ]
     }),
     new CopyWebpackPlugin({
       patterns: [
