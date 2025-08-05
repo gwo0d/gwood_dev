@@ -13,7 +13,12 @@ module.exports = {
     publicPath: '/',
   },
   plugins: [
-    new HtmlWebpackPlugin({ template: './src/index.html', minify: 'auto' }),
+    new HtmlWebpackPlugin({
+      template: './src/index.html',
+      minify: 'auto',
+      inject: 'body',
+      scriptLoading: 'defer',
+    }),
     new MiniCssExtractPlugin({
       filename: 'styles.[contenthash].css',
       chunkFilename: '[id].css'
