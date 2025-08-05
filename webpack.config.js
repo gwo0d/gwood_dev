@@ -28,7 +28,10 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({ template: './src/index.html', minify: 'auto' }),
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin({
+            filename: 'styles.[contenthash].css',
+            chunkFilename: '[id].css'
+        }),
         new PurgeCSSPlugin({
             paths: globAll.sync([
                 `${path.join(process.cwd(), 'src')}/**/*.js`,
