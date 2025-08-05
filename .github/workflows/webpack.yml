@@ -23,7 +23,7 @@ jobs:
       - name: Build with Webpack
         run: |
           npm ci
-          npx webpack
+          npm run build
 
       - name: Upload generated files as artifact
         uses: actions/upload-pages-artifact@v3

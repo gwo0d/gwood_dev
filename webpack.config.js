@@ -12,8 +12,9 @@ module.exports = {
     mode: 'development',
     entry: './src/js/main.js',
     output: {
-        filename: 'main.js',
+        filename: 'bundle.[contenthash].js',
         path: path.resolve(__dirname, 'docs'),
+        publicPath: '/',
         clean: true
     },
     devtool: 'source-map',
