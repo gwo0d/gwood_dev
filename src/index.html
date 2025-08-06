@@ -14,6 +14,30 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="gwood.dev" />
     <link rel="manifest" href="/favicon/site.webmanifest" />
+
+    <!-- Preconnect to required origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+    <!-- Preload and load Google Fonts -->
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap">
+    </noscript>
+
+    <!-- Preload and load Bootstrap Icons -->
+    <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+        media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    </noscript>
 </head>
 
 <body>
@@ -21,12 +45,11 @@
         <h1 class="display-2">Hi, I'm George.</h1>
         <div class="d-flex gap-2 px-1">
             <a href="https://bsky.app/profile/gwood.dev" target="_blank" aria-label="BlueSky (opens in new tab)"><i
-                    class="bi bi-bluesky" style="font-size: 2.5rem;"></i></a>
+                    class="bi bi-bluesky social-icon"></i></a>
             <a href="https://mastodon.social/@gwood.dev@bsky.brid.gy" target="_blank"
-                aria-label="Mastodon (opens in new tab)"><i class="bi bi-mastodon"
-                    style="font-size: 2.5rem;"></i></a>
+                aria-label="Mastodon (opens in new tab)"><i class="bi bi-mastodon social-icon"></i></a>
             <a href="https://github.com/gwo0d" target="_blank" aria-label="GitHub (opens in new tab)"><i
-                    class="bi bi-github" style="font-size: 2.5rem;"></i></a>
+                    class="bi bi-github social-icon"></i></a>
         </div>
         <a class="lead icon-link"
             href="https://keys.openpgp.org/vks/v1/by-fingerprint/8F23B1FCC3B0110B08C11EAEC6ED36301101A7A8"
