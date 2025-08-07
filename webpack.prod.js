@@ -11,11 +11,11 @@ module.exports = merge(common, {
   },
   plugins: [
     new PurgeCSSPlugin({
-        paths: globAll.sync([
-            `${path.join(process.cwd(), 'src')}/**/*.js`,
-            `${path.join(process.cwd(), 'src')}/**/*.html`,
-            `${path.join(process.cwd(), 'src')}/**/*.scss`
-        ]),
+      paths: globAll.sync([
+        `${path.join(process.cwd(), 'src')}/**/*.js`,
+        `${path.join(process.cwd(), 'src')}/**/*.html`,
+        `${path.join(process.cwd(), 'src')}/**/*.scss`
+      ]),
     }),
   ]
 });
