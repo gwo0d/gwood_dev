@@ -19,7 +19,7 @@ This is the source code for my personal website, [gwood.dev](https://gwood.dev).
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/gwo0d/gwo0d.github.io.git
+    git clone https://github.com/gwo0d/gwood_dev.git
     ```
 2.  Install the dependencies:
     ```bash
