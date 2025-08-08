@@ -1,6 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -20,10 +19,6 @@ module.exports = {
       inject: 'body',
       scriptLoading: 'defer',
     }),
-    new MiniCssExtractPlugin({
-      filename: 'styles.[contenthash].css',
-      chunkFilename: '[id].css'
-    }),
     new PreloadWebpackPlugin({
       rel: 'preload',
       include: 'allAssets',
@@ -41,14 +36,14 @@ module.exports = {
         { from: 'src/assets/favicon', to: 'favicon' }
       ]
     }),
-      new CompressionPlugin({
-        filename: '[path][base].gz',
-        algorithm: 'gzip',
-        test: /\.(js|css|html|svg)$/i,
-        threshold: 10240,
-        minRatio: 0.8,
-        deleteOriginalAssets: false
-      })
+    new CompressionPlugin({
+      filename: '[path][base].gz',
+      algorithm: 'gzip',
+      test: /\.(js|css|html|svg)$/i,
+      threshold: 10240,
+      minRatio: 0.8,
+      deleteOriginalAssets: false
+    })
   ],
   module: {
     rules: [
@@ -56,7 +51,7 @@ module.exports = {
         test: /\.(scss)$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader
+            loader: 'style-loader'
           },
           {
             loader: 'css-loader'
