@@ -4,7 +4,8 @@ const common = require('./webpack.common.js');
 module.exports = merge(common, {
   mode: 'production',
   output: {
-    clean: true
+    clean: true,
+    publicPath: './'
   },
   plugins: []
 });
