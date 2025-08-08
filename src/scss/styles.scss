@@ -66,6 +66,10 @@ $display-font-weight: 700;
 $bootstrap-icons-font-dir: '../../node_modules/bootstrap-icons/font/fonts';
 @import '../../node_modules/bootstrap-icons/font/bootstrap-icons';
 
+a {
+    text-decoration: none
+}
+
 .social-icon {
     @include font-size(2.5rem);
 }
