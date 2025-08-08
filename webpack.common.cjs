@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
 const autoprefixer = require('autoprefixer');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = {
@@ -39,6 +40,9 @@ module.exports = {
         /\.svg$/,
         /\.webmanifest$/,
       ],
+    }),
+    new CopyWebpackPlugin({
+      patterns: [{ from: 'src/assets/favicon', to: 'favicon' }],
     }),
     new CompressionPlugin({
       filename: '[path][base].gz',
@@ -84,15 +88,8 @@ module.exports = {
         ],
       },
       {
-        test: /\.(png|jpg|jpeg|gif|ico|woff|woff2|eot|ttf|otf|webp)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|ico|woff|woff2|eot|ttf|otf|webp)$/i,
         type: 'asset/resource',
-      },
-      {
-        test: /\.svg$/,
-        loader: 'svg-url-loader',
-        options: {
-          limit: 10000,
-        },
       },
     ],
   },

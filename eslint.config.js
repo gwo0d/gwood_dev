@@ -5,6 +5,9 @@ import prettierConfig from 'eslint-config-prettier';
 import jest from 'eslint-plugin-jest';
 
 export default [
+  {
+    ignores: ['docs/'],
+  },
   js.configs.recommended,
   {
     languageOptions: {
