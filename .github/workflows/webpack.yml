@@ -24,9 +24,14 @@ jobs:
         env:
           NODE_ENV: production
         run: |
-          # Remove package-lock.json if it exists and do a clean install
+          # Clean slate approach
           rm -f package-lock.json
-          npm install
+          # Clear npm cache
+          npm cache clean --force
+          # Install all dependencies with legacy peer deps to avoid conflicts
+          npm install --legacy-peer-deps --verbose
+          # Verify webpack-cli is available, install if missing
+          npx webpack-cli --version || npm install -g webpack-cli
           npm run build
 
       - name: Upload generated files as artifact
