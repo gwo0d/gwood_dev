@@ -81,7 +81,7 @@ import 'bootstrap/js/dist/dropdown';
         }
     })
 
-    window.addEventListener('DOMContentLoaded', () => {
+    const initThemeSwitcher = () => {
         showActiveTheme(getPreferredTheme())
 
         document.querySelectorAll('[data-bs-theme-value]')
@@ -93,5 +93,11 @@ import 'bootstrap/js/dist/dropdown';
                     showActiveTheme(theme, true)
                 })
             })
-    })
+    }
+
+    if (document.readyState === 'loading') {
+        window.addEventListener('DOMContentLoaded', initThemeSwitcher)
+    } else {
+        initThemeSwitcher()
+    }
 })()
