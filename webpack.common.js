@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = {
   entry: './src/js/main.js',
@@ -39,7 +40,15 @@ module.exports = {
       patterns: [
         { from: 'src/assets/favicon', to: 'favicon' }
       ]
-    })
+    }),
+      new CompressionPlugin({
+        filename: '[path][base].gz',
+        algorithm: 'gzip',
+        test: /\.(js|css|html|svg)$/i,
+        threshold: 10240,
+        minRatio: 0.8,
+        deleteOriginalAssets: false
+      })
   ],
   module: {
     rules: [
