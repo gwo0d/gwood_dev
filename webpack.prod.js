@@ -16,6 +16,9 @@ module.exports = merge(common, {
         `${path.join(process.cwd(), 'src')}/**/*.html`,
         `${path.join(process.cwd(), 'src')}/**/*.scss`
       ]),
+      safelist: {
+        standard: [/data-bs-theme/]
+      }
     }),
   ]
 });
