@@ -18,13 +18,13 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
+          node-version: '20.x'
 
       - name: Build with Webpack
         env:
           NODE_ENV: production
         run: |
-          npm ci
+          npm ci --verbose
           npm list webpack-cli || npm install -D webpack-cli
           npm run build
 
