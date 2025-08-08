@@ -26,12 +26,10 @@ jobs:
         run: |
           # Clean slate approach
           rm -f package-lock.json
-          # Clear npm cache
-          npm cache clean --force
-          # Install all dependencies with legacy peer deps to avoid conflicts
-          npm install --legacy-peer-deps --verbose
-          # Verify webpack-cli is available, install if missing
-          npx webpack-cli --version || npm install -g webpack-cli
+          # Install dependencies normally (remove --legacy-peer-deps)
+          npm install --verbose
+          # Verify key packages are installed
+          npm list webpack webpack-cli webpack-merge
           npm run build
 
       - name: Upload generated files as artifact
