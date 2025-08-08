@@ -21,6 +21,8 @@ jobs:
           node-version: 22.x
 
       - name: Build with Webpack
+        env:
+          NODE_ENV: production
         run: |
           npm ci
           npm run build
