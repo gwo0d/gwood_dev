@@ -2,9 +2,15 @@
 @import '../../node_modules/bootstrap/scss/functions';
 
 // Custom Colours
+$primary: #ff9505;
+
+// Light Mode
 $body-bg: #fff8f0;
 $body-color: #1c2826;
-$primary: #ff9505;
+
+// Dark Mode
+$body-bg-dark: #1c2826;
+$body-color-dark: #fff8f0;
 
 // Custom Fonts
 $font-family-sans-serif: 'Noto Sans', sans-serif;
