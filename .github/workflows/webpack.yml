@@ -24,8 +24,9 @@ jobs:
         env:
           NODE_ENV: production
         run: |
-          npm ci --verbose
-          npm list webpack-cli || npm install -D webpack-cli
+          # Remove package-lock.json if it exists and do a clean install
+          rm -f package-lock.json
+          npm install
           npm run build
 
       - name: Upload generated files as artifact
