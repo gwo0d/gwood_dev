@@ -1,15 +1,25 @@
-// Import custom CSS
-import '../scss/styles.scss';
+// Import Custom CSS
+import '../scss/styles.scss'
 
-// Import all of Bootstrap’s JS
-import * as bootstrap from 'bootstrap';
+// Import Bootstrap’s JS
+// import 'bootstrap/js/dist/alert';
+import 'bootstrap/js/dist/button';
+// import 'bootstrap/js/dist/carousel';
+// import 'bootstrap/js/dist/collapse';
+import 'bootstrap/js/dist/dropdown';
+// import 'bootstrap/js/dist/modal';
+// import 'bootstrap/js/dist/offcanvas';
+// import 'bootstrap/js/dist/popover';
+// import 'bootstrap/js/dist/scrollspy';
+// import 'bootstrap/js/dist/tab';
+// import 'bootstrap/js/dist/toast';
+// import 'bootstrap/js/dist/tooltip';
 
 /*!
  * Color mode toggler for Bootstrap's docs (https://getbootstrap.com/)
- * Copyright 2011-2024 The Bootstrap Authors
+ * Copyright 2011-2025 The Bootstrap Authors
  * Licensed under the Creative Commons Attribution 3.0 Unported License.
  */
-
 (() => {
     'use strict'
 
@@ -26,8 +36,8 @@ import * as bootstrap from 'bootstrap';
     }
 
     const setTheme = theme => {
-        if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.setAttribute('data-bs-theme', 'dark')
+        if (theme === 'auto') {
+            document.documentElement.setAttribute('data-bs-theme', (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
         } else {
             document.documentElement.setAttribute('data-bs-theme', theme)
         }
@@ -36,32 +46,32 @@ import * as bootstrap from 'bootstrap';
     setTheme(getPreferredTheme())
 
     const showActiveTheme = (theme, focus = false) => {
-        const themeSwitcher = document.querySelector('.dropdown')
-        if (!themeSwitcher) {
-            return
-        }
-        const themeSwitcherText = document.querySelector('.dropdown-toggle')
-        const themeSwitcherIcon = document.querySelector('.dropdown-toggle .bi')
-        const activeThemeIcon = document.querySelector(`.dropdown-item[data-bs-theme-value="${theme}"] .bi`)
+        const themeSwitcher = document.querySelector('#bd-theme')
+        if (!themeSwitcher) return
 
-        document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
-            element.classList.remove('active')
-            element.setAttribute('aria-pressed', 'false')
-        })
-
+        const themeSwitcherText = document.querySelector('#bd-theme-text')
         const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`)
+        if (!btnToActive) return
 
-        if (btnToActive) {
-            btnToActive.classList.add('active')
-            btnToActive.setAttribute('aria-pressed', 'true')
-            const themeSwitcherLabel = `${themeSwitcherText.textContent} (${btnToActive.textContent.trim()})`
+        document.querySelectorAll('[data-bs-theme-value]').forEach(el => {
+            el.classList.remove('active')
+            el.setAttribute('aria-pressed', 'false')
+        })
+        btnToActive.classList.add('active')
+        btnToActive.setAttribute('aria-pressed', 'true')
+
+        const activeIcon = btnToActive.querySelector('i')
+        const switcherIcon = themeSwitcher.querySelector('i')
+        if (activeIcon && switcherIcon) {
+            switcherIcon.className = activeIcon.className
+        }
+
+        if (themeSwitcherText) {
+            const themeSwitcherLabel = `${themeSwitcherText.textContent} (${btnToActive.dataset.bsThemeValue})`
             themeSwitcher.setAttribute('aria-label', themeSwitcherLabel)
-            themeSwitcherIcon.classList = activeThemeIcon.classList
         }
 
-        if (focus) {
-            themeSwitcher.focus()
-        }
+        if (focus) themeSwitcher.focus()
     }
 
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
