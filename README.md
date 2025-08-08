@@ -4,16 +4,16 @@ This is the source code for my personal website, [gwood.dev](https://gwood.dev).
 
 ## Tech Stack
 
-*   [Webpack](https://webpack.js.org/)
-*   [Bootstrap](https://getbootstrap.com/)
-*   [Sass](https://sass-lang.com/)
+- [Webpack](https://webpack.js.org/)
+- [Bootstrap](https://getbootstrap.com/)
+- [Sass](https://sass-lang.com/)
 
 ## Getting Started
 
 ### Prerequisites
 
-*   [Node.js](https://nodejs.org/)
-*   [npm](https://www.npmjs.com/)
+- [Node.js](https://nodejs.org/)
+- [npm](https://www.npmjs.com/)
 
 ### Installation
 

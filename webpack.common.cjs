@@ -3,10 +3,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
 const autoprefixer = require('autoprefixer');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const CompressionPlugin = require("compression-webpack-plugin");
+const CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = {
+  resolve: {
+    alias: {
+      '~': path.resolve(__dirname, 'node_modules'),
+    },
+  },
   entry: './src/js/main.js',
   output: {
     filename: 'bundle.[contenthash].js',
@@ -22,7 +26,7 @@ module.exports = {
     }),
     new MiniCssExtractPlugin({
       filename: 'styles.[contenthash].css',
-      chunkFilename: '[id].css'
+      chunkFilename: '[id].css',
     }),
     new PreloadWebpackPlugin({
       rel: 'preload',
@@ -33,22 +37,17 @@ module.exports = {
         /\.ico$/,
         /\.png$/,
         /\.svg$/,
-        /\.webmanifest$/
-      ]
+        /\.webmanifest$/,
+      ],
     }),
-    new CopyWebpackPlugin({
-      patterns: [
-        { from: 'src/assets/favicon', to: 'favicon' }
-      ]
+    new CompressionPlugin({
+      filename: '[path][base].gz',
+      algorithm: 'gzip',
+      test: /\.(js|css|html|svg)$/i,
+      threshold: 10240,
+      minRatio: 0.8,
+      deleteOriginalAssets: false,
     }),
-      new CompressionPlugin({
-        filename: '[path][base].gz',
-        algorithm: 'gzip',
-        test: /\.(js|css|html|svg)$/i,
-        threshold: 10240,
-        minRatio: 0.8,
-        deleteOriginalAssets: false
-      })
   ],
   module: {
     rules: [
@@ -56,20 +55,18 @@ module.exports = {
         test: /\.(scss)$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader
+            loader: MiniCssExtractPlugin.loader,
           },
           {
-            loader: 'css-loader'
+            loader: 'css-loader',
           },
           {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [
-                  autoprefixer
-                ]
-              }
-            }
+                plugins: [autoprefixer],
+              },
+            },
           },
           {
             loader: 'sass-loader',
@@ -79,17 +76,24 @@ module.exports = {
                   'mixed-decls',
                   'color-functions',
                   'global-builtin',
-                  'import'
-                ]
-              }
-            }
-          }
-        ]
+                  'import',
+                ],
+              },
+            },
+          },
+        ],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif|ico|woff|woff2|eot|ttf|otf|webp)$/i,
+        test: /\.(png|jpg|jpeg|gif|ico|woff|woff2|eot|ttf|otf|webp)$/i,
         type: 'asset/resource',
-      }
-    ]
-  }
+      },
+      {
+        test: /\.svg$/,
+        loader: 'svg-url-loader',
+        options: {
+          limit: 10000,
+        },
+      },
+    ],
+  },
 };

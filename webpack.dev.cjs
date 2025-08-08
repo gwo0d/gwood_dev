@@ -1,5 +1,5 @@
 const { merge } = require('webpack-merge');
-const common = require('./webpack.common.js');
+const common = require('./webpack.common.cjs');
 const path = require('path');
 
 module.exports = merge(common, {
@@ -8,9 +8,9 @@ module.exports = merge(common, {
   devServer: {
     static: path.resolve(__dirname, 'docs'),
     port: 8080,
-    hot: true
+    hot: true,
   },
   performance: {
-    hints: false
+    hints: false,
   },
 });
