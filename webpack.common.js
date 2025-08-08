@@ -11,7 +11,7 @@ module.exports = {
   output: {
     filename: 'bundle.[contenthash].js',
     path: path.resolve(__dirname, 'docs'),
-    publicPath: process.env.NODE_ENV === 'production' ? '/gwood_dev/' : '/',
+    publicPath: '/',
   },
   plugins: [
     new HtmlWebpackPlugin({
