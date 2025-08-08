@@ -13,12 +13,12 @@ $body-bg-dark: #1c2826;
 $body-color-dark: #fff8f0;
 
 // Custom Fonts
-$font-family-sans-serif: 'Noto Sans', sans-serif;
+$font-family-base: 'Noto Sans', sans-serif;
 $font-size-base: 1.25rem;
 $font-family-monospace: 'JetBrains Mono', monospace;
 $headings-font-family: 'Noto Serif', serif;
 $headings-font-weight: 600;
-$display-font-weight: 750;
+$display-font-weight: 700;
 
 // Import Other Required Bootstrap Components
 @import '../../node_modules/bootstrap/scss/variables';
@@ -67,5 +67,5 @@ $bootstrap-icons-font-dir: '../../node_modules/bootstrap-icons/font/fonts';
 @import '../../node_modules/bootstrap-icons/font/bootstrap-icons';
 
 .social-icon {
-    font-size: 2.5rem;
+    @include font-size(2.5rem);
 };
