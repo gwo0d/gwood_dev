@@ -67,9 +67,10 @@ $bootstrap-icons-font-dir: '../../node_modules/bootstrap-icons/font/fonts';
 @import '../../node_modules/bootstrap-icons/font/bootstrap-icons';
 
 a {
-    text-decoration: none
+    text-decoration: none;
 }
 
 .social-icon {
+    color: $primary;
     @include font-size(2.5rem);
 }
