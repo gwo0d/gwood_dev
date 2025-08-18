@@ -74,3 +74,16 @@ a {
     color: $primary;
     @include font-size(2.5rem);
 }
+
+.theme-switcher {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    // For sm and up: bottom-0 end-0
+    @include media-breakpoint-up(lg) {
+        top: auto;
+        bottom: 0;
+        right: 0;
+    }
+}
