@@ -15,6 +15,8 @@ import 'bootstrap/js/dist/modal.js';
 // import 'bootstrap/js/dist/toast.js';
 // import 'bootstrap/js/dist/tooltip.js';
 
+import 'bsky-embed/dist/bsky-embed.es.js';
+
 import { initThemeSwitcher } from './theme-switcher.js';
 
 if (document.readyState === 'loading') {
