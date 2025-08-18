@@ -80,7 +80,6 @@ a {
     top: 0;
     right: 0;
 
-    // For sm and up: bottom-0 end-0
     @include media-breakpoint-up(lg) {
         top: auto;
         bottom: 0;
