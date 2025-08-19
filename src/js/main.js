@@ -20,10 +20,7 @@ document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((tooltip) => {
   new Tooltip(tooltip);
 });
 
-// Defer loading until DOM is ready
-window.addEventListener('DOMContentLoaded', () => {
-  import('bsky-embed/dist/bsky-embed.es.js');
-});
+import 'bsky-embed/dist/bsky-embed.es.js';
 
 import { initThemeSwitcher } from './theme-switcher.js';
 
