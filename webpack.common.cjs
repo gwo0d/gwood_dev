@@ -34,7 +34,7 @@ module.exports = {
       include: 'allAssets',
       fileWhitelist: [/\.js$/, /\.css$/],
       fileBlacklist: [
-        /favicon\//,
+        /assets\//,
         /\.ico$/,
         /\.png$/,
         /\.svg$/,
@@ -42,7 +42,7 @@ module.exports = {
       ],
     }),
     new CopyWebpackPlugin({
-      patterns: [{ from: 'src/assets/favicon', to: 'favicon' }],
+      patterns: [{ from: 'src/assets', to: 'assets', noErrorOnMissing: true }],
     }),
     new CompressionPlugin({
       filename: '[path][base].gz',
