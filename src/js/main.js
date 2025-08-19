@@ -13,7 +13,12 @@ import 'bootstrap/js/dist/modal.js';
 // import 'bootstrap/js/dist/scrollspy.js';
 // import 'bootstrap/js/dist/tab.js';
 // import 'bootstrap/js/dist/toast.js';
-// import 'bootstrap/js/dist/tooltip.js';
+import Tooltip from 'bootstrap/js/dist/tooltip.js';
+
+// Enable Tooltips
+document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((tooltip) => {
+  new Tooltip(tooltip);
+});
 
 import 'bsky-embed/dist/bsky-embed.es.js';
 
