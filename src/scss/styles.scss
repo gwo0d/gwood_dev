@@ -1,19 +1,15 @@
-// Include Custom Font Variables
-@use 'font-variables.scss' as *;
-
 // Include Functions First
 @import 'bootstrap/scss/functions';
 
-// Custom Colours
-$primary: #ff9505;
+$primary: shade-color(#198754, 10%);
 
 // Light Mode
-$body-bg: #fff8f0;
+$body-bg: #fff8ff;
 $body-color: #1c2826;
 
 // Dark Mode
-$body-bg-dark: #1c2826;
-$body-color-dark: #fff8f0;
+$body-bg-dark: $body-color;
+$body-color-dark: $body-bg;
 
 // Custom Fonts
 $font-family-base: 'JetBrains Mono', monospace;
@@ -26,9 +22,11 @@ $display-font-weight: 700;
 // Other Variable Overrides
 $link-decoration: none;
 
-// Import Other Required Bootstrap Components
+// Import Variables
 @import 'bootstrap/scss/variables';
 @import 'bootstrap/scss/variables-dark';
+
+// Import Other Required Bootstrap Components
 @import 'bootstrap/scss/maps';
 @import 'bootstrap/scss/mixins';
 @import 'bootstrap/scss/root';
@@ -69,7 +67,14 @@ $link-decoration: none;
 // @import 'bootstrap/scss/helpers';
 
 // Import Non-Bootstrap Components
+$bootstrap-icons-font-dir: 'bootstrap-icons/font/fonts';
 @import 'bootstrap-icons/font/bootstrap-icons';
+
+
+$custom-icons-font-family: "custom-icons" !default;
+$custom-icons-font-path: "../assets/fonts" !default;
+
+$icon-aoco: "\e900";
 
 @font-face {
     font-family: '#{$custom-icons-font-family}';
@@ -86,7 +91,6 @@ $link-decoration: none;
 .custom-icon {
     /* use !important to prevent issues with browser extensions that change fonts */
     font-family: '#{$custom-icons-font-family}' !important;
-    speak: never;
     font-style: normal;
     font-weight: normal;
     font-variant: normal;
