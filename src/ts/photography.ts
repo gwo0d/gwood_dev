@@ -8,11 +8,6 @@ import {
 const agent = new AtpAgent({ service: "https://api.bsky.app" });
 const username = "gwood.dev";
 
-const loadingStatusMessage = `<p>Loading photos...
-<div class="spinner-grow text-primary" role="status">
-  <span class="visually-hidden">Loading...</span>
-</div>`;
-
 type PhotoImage = {
     fullsize: string;
     thumb?: string;
@@ -122,7 +117,7 @@ function renderGallery(photos: PhotoPost[]) {
     if (!gallery) return;
 
     // Clear status if present
-    if (status) status.remove();
+    if (status) status.classList.add('visually-hidden');
 
     if (photos.length === 0) {
         const empty = document.createElement('div');
@@ -172,7 +167,7 @@ async function ensurePhotosLoaded() {
     if (photosLoaded) return;
     try {
         const status = document.getElementById('ppGalleryStatus');
-        if (status) status.innerHTML = loadingStatusMessage;
+        if (status) status.classList.remove('visually-hidden');
         const photos = await fetchPhotos(60);
         shuffleArray(photos);
         renderGallery(photos);
