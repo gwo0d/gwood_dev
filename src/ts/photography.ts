@@ -4,10 +4,14 @@ import {
     AppBskyEmbedImages,
     AppBskyEmbedRecordWithMedia,
 } from "@atproto/api";
-import { features } from "process";
 
 const agent = new AtpAgent({ service: "https://api.bsky.app" });
 const username = "gwood.dev";
+
+const loadingStatusMessage = `<p>Loading photos...
+<div class="spinner-grow text-primary" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>`;
 
 type PhotoImage = {
     fullsize: string;
@@ -168,7 +172,7 @@ async function ensurePhotosLoaded() {
     if (photosLoaded) return;
     try {
         const status = document.getElementById('ppGalleryStatus');
-        if (status) status.textContent = 'Loading photos…';
+        if (status) status.innerHTML = loadingStatusMessage;
         const photos = await fetchPhotos(60);
         shuffleArray(photos);
         renderGallery(photos);

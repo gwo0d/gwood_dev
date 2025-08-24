@@ -61,10 +61,10 @@ $link-decoration: none;
 @import 'bootstrap/scss/tooltip';
 // @import "bootstrap/scss/popover";
 // @import "bootstrap/scss/carousel";
-// @import "bootstrap/scss/spinners";
+@import "bootstrap/scss/spinners";
 // @import "bootstrap/scss/offcanvas";
 // @import "bootstrap/scss/placeholders";
-// @import 'bootstrap/scss/helpers';
+@import 'bootstrap/scss/helpers';
 
 // Import Non-Bootstrap Components
 $bootstrap-icons-font-dir: 'bootstrap-icons/font/fonts';
