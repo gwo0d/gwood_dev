@@ -36,13 +36,13 @@ $link-decoration: none;
 @import 'bootstrap/scss/utilities/api';
 @import 'bootstrap/scss/reboot';
 @import 'bootstrap/scss/type';
-// @import "bootstrap/scss/images";
-@import "bootstrap/scss/containers";
-@import "bootstrap/scss/grid";
+@import "bootstrap/scss/images";
+@import 'bootstrap/scss/containers';
+@import 'bootstrap/scss/grid';
 // @import "bootstrap/scss/tables";
 // @import "bootstrap/scss/forms";
 @import 'bootstrap/scss/buttons';
-@import "bootstrap/scss/transitions";
+@import 'bootstrap/scss/transitions';
 @import 'bootstrap/scss/dropdown';
 // @import "bootstrap/scss/button-group";
 // @import "bootstrap/scss/nav";
@@ -55,10 +55,10 @@ $link-decoration: none;
 // @import "bootstrap/scss/alert";
 // @import "bootstrap/scss/progress";
 // @import "bootstrap/scss/list-group";
-@import "bootstrap/scss/close";
+@import 'bootstrap/scss/close';
 // @import "bootstrap/scss/toasts";
-@import "bootstrap/scss/modal";
-@import "bootstrap/scss/tooltip";
+@import 'bootstrap/scss/modal';
+@import 'bootstrap/scss/tooltip';
 // @import "bootstrap/scss/popover";
 // @import "bootstrap/scss/carousel";
 // @import "bootstrap/scss/spinners";
@@ -70,57 +70,90 @@ $link-decoration: none;
 $bootstrap-icons-font-dir: 'bootstrap-icons/font/fonts';
 @import 'bootstrap-icons/font/bootstrap-icons';
 
+$custom-icons-font-family: 'custom-icons' !default;
+$custom-icons-font-path: '../assets/fonts' !default;
 
-$custom-icons-font-family: "custom-icons" !default;
-$custom-icons-font-path: "../assets/fonts" !default;
-
-$icon-aoco: "\e900";
+$icon-aoco: '\e900';
 
 @font-face {
-    font-family: '#{$custom-icons-font-family}';
-    src: url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.eot?aoqow0');
-    src: url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.eot?aoqow0#iefix') format('embedded-opentype'),
-    url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.ttf?aoqow0') format('truetype'),
-    url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.woff?aoqow0') format('woff'),
-    url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.svg?aoqow0##{$custom-icons-font-family}') format('svg');
-    font-weight: normal;
-    font-style: normal;
-    font-display: block;
+  font-family: '#{$custom-icons-font-family}';
+  src: url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.eot?aoqow0');
+  src: url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.eot?aoqow0#iefix') format('embedded-opentype'),
+  url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.ttf?aoqow0') format('truetype'),
+  url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.woff?aoqow0') format('woff'),
+  url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.svg?aoqow0##{$custom-icons-font-family}') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
 }
 
 .custom-icon {
-    /* use !important to prevent issues with browser extensions that change fonts */
-    font-family: '#{$custom-icons-font-family}' !important;
-    font-style: normal;
-    font-weight: normal;
-    font-variant: normal;
-    text-transform: none;
-    line-height: 1;
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: '#{$custom-icons-font-family}' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
 
-    /* Better Font Rendering =========== */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .icon-aoco {
-    &:before {
-        content: $icon-aoco;
-    }
+  &:before {
+    content: $icon-aoco;
+  }
 }
 
 .icon {
-    @extend a;
-    @include font-size(2.5rem);
+  @extend a;
+  @include font-size(2.5rem);
 }
 
 .theme-switcher {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  @include media-breakpoint-up(lg) {
+    top: auto;
+    bottom: 0;
+    right: 0;
+  }
+}
+
+// Photography modal gallery
+#ppGallery {
+  .pp-tile {
+    aspect-ratio: 1 / 1;
+
+  }
+
+  .pp-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: .25s ease;
+  }
+
+  .overlay {
     position: absolute;
     top: 0;
+    bottom: 0;
+    left: 0;
     right: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    transition: .25s ease;
+    background-color: var(--bs-primary);
+  }
 
-    @include media-breakpoint-up(lg) {
-        top: auto;
-        bottom: 0;
-        right: 0;
-    }
+  .overlay:hover {
+    opacity: 0.3;
+    cursor: pointer;
+  }
 }
