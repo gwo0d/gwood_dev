@@ -11,8 +11,9 @@ module.exports = {
     alias: {
       '~': path.resolve(__dirname, 'node_modules'),
     },
+    extensions: ['.tsx', '.ts', '.js'],
   },
-  entry: './src/js/main.js',
+  entry: './src/ts/main.ts',
   output: {
     filename: 'bundle.[contenthash].js',
     path: path.resolve(__dirname, 'docs'),
@@ -55,6 +56,16 @@ module.exports = {
   ],
   module: {
     rules: [
+      {
+        test: /\.ts?$/,
+        use: {
+          loader: 'ts-loader',
+          options: {
+            transpileOnly: true,
+          },
+        },
+        exclude: /node_modules/,
+      },
       {
         test: /\.(scss)$/,
         use: [

@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "isolatedModules": true,
+  "types": ["node"],
+    "baseUrl": "./"
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts"]
+}

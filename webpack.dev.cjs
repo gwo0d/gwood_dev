@@ -9,6 +9,7 @@ module.exports = merge(common, {
     static: path.resolve(__dirname, 'docs'),
     port: 8080,
     hot: true,
+    compress: true,
   },
   performance: {
     hints: false,
