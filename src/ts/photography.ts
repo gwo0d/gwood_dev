@@ -68,7 +68,7 @@ export async function fetchPhotoPostsPage(params?: {
     cursor?: string;
     pageSize?: number;
 }) {
-    const limit = Math.min(Math.max(params?.pageSize ?? 20, 1), 25); // API caps ~25
+    const limit = Math.min(Math.max(params?.pageSize ?? 60, 1), 60); // API cap: 100
     const res = await agent.api.app.bsky.feed.searchPosts({
         q: "🎞 | 📷",
         author: username,
@@ -99,7 +99,7 @@ export async function fetchPhotos(maxPhotos = 50) {
     while (all.length < maxPhotos) {
         const { photoPosts, cursor: next } = await fetchPhotoPostsPage({
             cursor,
-            pageSize: 25,
+            pageSize: 60,
         });
 
         all.push(...photoPosts);
