@@ -15,19 +15,12 @@ import 'bootstrap/js/dist/modal.js';
 // import 'bootstrap/js/dist/toast.js';
 import Tooltip from 'bootstrap/js/dist/tooltip.js';
 import './photography';
+import './theme-switcher';
 
 // Enable Tooltips
 document
-  .querySelectorAll<HTMLElement>('[data-bs-toggle="tooltip"]')
-  .forEach((tooltip) => {
-    // eslint-disable-next-line no-new
-    new Tooltip(tooltip);
-  });
-
-import { initThemeSwitcher } from './theme-switcher';
-
-if (document.readyState === 'loading') {
-  window.addEventListener('DOMContentLoaded', initThemeSwitcher);
-} else {
-  initThemeSwitcher();
-}
+	.querySelectorAll<HTMLElement>('[data-bs-toggle="tooltip"]')
+	.forEach((tooltip) => {
+		// eslint-disable-next-line no-new
+		new Tooltip(tooltip);
+	});
