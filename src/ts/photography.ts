@@ -78,7 +78,7 @@ export async function fetchPhotoPostsPage(params?: {
 	pageSize?: number;
 }) {
 	const limit = Math.min(Math.max(params?.pageSize ?? 60, 1), 60); // API cap: 100
-	const res = await agent.api.app.bsky.feed.searchPosts({
+	const res = await agent.app.bsky.feed.searchPosts({
 		q: '\u{1F39E} | \u{1F4F7}',
 		author: username,
 		limit,
