@@ -72,7 +72,7 @@ export async function fetchPhotoPostsPage(params?: {
 		q: "\u{1F39E} | \u{1F4F7}",
 		author: username,
 		limit,
-		sort: 'latest',
+		sort: 'top',
 		cursor: params?.cursor,
 	});
 
