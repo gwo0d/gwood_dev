@@ -4,7 +4,7 @@
  * Licensed under the Creative Commons Attribution 3.0 Unported License.
  */
 (() => {
-	'use strict'
+	'use strict';
 
 	// Define a type for the possible theme values for better type-checking.
 	type Theme = 'light' | 'dark' | 'auto';
@@ -46,7 +46,9 @@
 	};
 
 	const getSystemTheme = (): Exclude<Theme, 'auto'> =>
-		window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+		window.matchMedia('(prefers-color-scheme: dark)').matches
+			? 'dark'
+			: 'light';
 
 	const setTheme = (theme: Theme): void => {
 		const target = theme === 'auto' ? getSystemTheme() : theme;
@@ -58,18 +60,24 @@
 
 	// Sync the dropdown UI and the trigger button's icon/label.
 	const showActiveTheme = (theme: Theme, focus: boolean = false): void => {
-		const themeSwitcherBtn = document.querySelector<HTMLButtonElement>('#bd-theme');
-		const themeSwitcherBtnIcon = themeSwitcherBtn?.querySelector<HTMLElement>('i');
+		const themeSwitcherBtn =
+			document.querySelector<HTMLButtonElement>('#bd-theme');
+		const themeSwitcherBtnIcon =
+			themeSwitcherBtn?.querySelector<HTMLElement>('i');
 		const themeSafe: Theme = isValidTheme(theme) ? theme : 'auto';
-		const btnToActivate = document.querySelector<HTMLElement>(`[data-bs-theme-value="${themeSafe}"]`);
+		const btnToActivate = document.querySelector<HTMLElement>(
+			`[data-bs-theme-value="${themeSafe}"]`
+		);
 
 		if (!themeSwitcherBtn || !btnToActivate) return;
 
 		// Update active state for menu items
-		document.querySelectorAll<HTMLElement>('[data-bs-theme-value]').forEach(el => {
-			el.classList.remove('active');
-			el.setAttribute('aria-pressed', 'false');
-		});
+		document
+			.querySelectorAll<HTMLElement>('[data-bs-theme-value]')
+			.forEach((el) => {
+				el.classList.remove('active');
+				el.setAttribute('aria-pressed', 'false');
+			});
 		btnToActivate.classList.add('active');
 		btnToActivate.setAttribute('aria-pressed', 'true');
 
@@ -78,28 +86,36 @@
 			const iconMap: Record<Theme, string> = {
 				light: 'bi-hexagon',
 				dark: 'bi-hexagon-fill',
-				auto: 'bi-hexagon-half'
+				auto: 'bi-hexagon-half',
 			};
-			const allIcons = ['bi-hexagon', 'bi-hexagon-fill', 'bi-hexagon-half'];
-			allIcons.forEach(c => themeSwitcherBtnIcon.classList.remove(c));
+			const allIcons = [
+				'bi-hexagon',
+				'bi-hexagon-fill',
+				'bi-hexagon-half',
+			];
+			allIcons.forEach((c) => themeSwitcherBtnIcon.classList.remove(c));
 			themeSwitcherBtnIcon.classList.add(iconMap[themeSafe]);
 		}
 
 		// Remove any previously-added visible label.
-		const existingLabel = themeSwitcherBtn.querySelector<HTMLSpanElement>('span[data-theme-label]');
+		const existingLabel = themeSwitcherBtn.querySelector<HTMLSpanElement>(
+			'span[data-theme-label]'
+		);
 		if (existingLabel) existingLabel.remove();
 
 		// Make the trigger accessible with a clear aria-label.
 		const labelMap: Record<Theme, string> = {
 			light: 'Theme: Light',
 			dark: 'Theme: Dark',
-			auto: 'Theme: Auto (follows system)'
+			auto: 'Theme: Auto (follows system)',
 		};
 		themeSwitcherBtn.setAttribute('aria-label', labelMap[themeSafe]);
 
 		// Also provide an SR-only label inside the button (redundant but safe)
 		const getOrCreateSrLabel = (): HTMLSpanElement => {
-			let span = themeSwitcherBtn.querySelector<HTMLSpanElement>('span[data-theme-sr-label]');
+			let span = themeSwitcherBtn.querySelector<HTMLSpanElement>(
+				'span[data-theme-sr-label]'
+			);
 			if (!span) {
 				span = document.createElement('span');
 				span.setAttribute('data-theme-sr-label', '');
@@ -117,13 +133,15 @@
 	setTheme(getPreferredTheme());
 
 	// Respond to OS theme changes only when using Auto (or when nothing explicit is stored).
-	window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-		const stored = getStoredTheme();
-		if (!stored || stored === 'auto') {
-			setTheme('auto');
-			showActiveTheme('auto');
-		}
-	});
+	window
+		.matchMedia('(prefers-color-scheme: dark)')
+		.addEventListener('change', () => {
+			const stored = getStoredTheme();
+			if (!stored || stored === 'auto') {
+				setTheme('auto');
+				showActiveTheme('auto');
+			}
+		});
 
 	// Sync across tabs/windows when localStorage changes
 	window.addEventListener('storage', (ev: StorageEvent) => {
@@ -142,9 +160,11 @@
 
 		document
 			.querySelectorAll<HTMLElement>('[data-bs-theme-value]')
-			.forEach(toggle => {
+			.forEach((toggle) => {
 				toggle.addEventListener('click', () => {
-					const themeValue = toggle.getAttribute('data-bs-theme-value');
+					const themeValue = toggle.getAttribute(
+						'data-bs-theme-value'
+					);
 					if (!isValidTheme(themeValue)) return;
 					const theme = themeValue as Theme;
 					setStoredTheme(theme);

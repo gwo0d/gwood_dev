@@ -3,10 +3,10 @@ import {
 	AppBskyFeedDefs,
 	AppBskyEmbedImages,
 	AppBskyEmbedRecordWithMedia,
-} from "@atproto/api";
+} from '@atproto/api';
 
-const agent = new AtpAgent({ service: "https://api.bsky.app" });
-const username = "gwood.dev";
+const agent = new AtpAgent({ service: 'https://api.bsky.app' });
+const username = 'gwood.dev';
 
 type PhotoImage = {
 	fullsize: string;
@@ -32,18 +32,26 @@ function extractImagesFromPost(post: AppBskyFeedDefs.PostView): PhotoImage[] {
 	if (!embed) return out;
 
 	// Direct images
-	if ((embed as any)?.$type === "app.bsky.embed.images#view") {
+	if ((embed as any)?.$type === 'app.bsky.embed.images#view') {
 		for (const img of (embed as AppBskyEmbedImages.View).images ?? []) {
-			out.push({ fullsize: img.fullsize, thumb: img.thumb, alt: img.alt });
+			out.push({
+				fullsize: img.fullsize,
+				thumb: img.thumb,
+				alt: img.alt,
+			});
 		}
 	}
 
 	// Record with media (may contain images)
-	if ((embed as any)?.$type === "app.bsky.embed.recordWithMedia#view") {
+	if ((embed as any)?.$type === 'app.bsky.embed.recordWithMedia#view') {
 		const media = (embed as AppBskyEmbedRecordWithMedia.View).media;
-		if ((media as any)?.$type === "app.bsky.embed.images#view") {
+		if ((media as any)?.$type === 'app.bsky.embed.images#view') {
 			for (const img of (media as AppBskyEmbedImages.View).images ?? []) {
-				out.push({ fullsize: img.fullsize, thumb: img.thumb, alt: img.alt });
+				out.push({
+					fullsize: img.fullsize,
+					thumb: img.thumb,
+					alt: img.alt,
+				});
 			}
 		}
 	}
@@ -52,11 +60,13 @@ function extractImagesFromPost(post: AppBskyFeedDefs.PostView): PhotoImage[] {
 }
 
 function toPhotoPost(post: AppBskyFeedDefs.PostView): PhotoPost {
-	const record = post.record as { text?: string; createdAt?: string } | undefined;
+	const record = post.record as
+		| { text?: string; createdAt?: string }
+		| undefined;
 	return {
 		postUri: post.uri,
 		authorHandle: post.author.handle,
-		text: record?.text ?? "",
+		text: record?.text ?? '',
 		createdAt: record?.createdAt,
 		images: extractImagesFromPost(post),
 	};
@@ -69,19 +79,19 @@ export async function fetchPhotoPostsPage(params?: {
 }) {
 	const limit = Math.min(Math.max(params?.pageSize ?? 60, 1), 60); // API cap: 100
 	const res = await agent.api.app.bsky.feed.searchPosts({
-		q: "\u{1F39E} | \u{1F4F7}",
+		q: '\u{1F39E} | \u{1F4F7}',
 		author: username,
 		limit,
 		sort: 'top',
 		cursor: params?.cursor,
 	});
 
-	if (!res.success) throw new Error("Error fetching Bluesky posts.");
+	if (!res.success) throw new Error('Error fetching Bluesky posts.');
 	const posts = res.data.posts as AppBskyFeedDefs.PostView[];
 
 	const photoPosts = posts
 		.map(toPhotoPost)
-		.filter(p => p.images.length > 0);
+		.filter((p) => p.images.length > 0);
 
 	return {
 		cursor: res.data.cursor,
@@ -150,7 +160,11 @@ function renderGallery(photos: PhotoPost[]) {
 			// Open the original post on BlueSky when clicked
 			overlay.addEventListener('click', () => {
 				const postId = post.postUri.split('/').pop();
-				window.open(`https://bsky.app/profile/${post.authorHandle}/post/${postId}`, '_blank', 'noopener');
+				window.open(
+					`https://bsky.app/profile/${post.authorHandle}/post/${postId}`,
+					'_blank',
+					'noopener'
+				);
 			});
 
 			figure.appendChild(overlay);

@@ -37,76 +37,39 @@ $spinner-animation-speed: 1s;
 @import 'bootstrap/scss/utilities/api';
 @import 'bootstrap/scss/reboot';
 @import 'bootstrap/scss/type';
-@import "bootstrap/scss/images";
+@import 'bootstrap/scss/images';
 @import 'bootstrap/scss/containers';
 @import 'bootstrap/scss/grid';
-// @import "bootstrap/scss/tables";
-// @import "bootstrap/scss/forms";
+// @import 'bootstrap/scss/tables';
+// @import 'bootstrap/scss/forms';
 @import 'bootstrap/scss/buttons';
 @import 'bootstrap/scss/transitions';
 @import 'bootstrap/scss/dropdown';
-@import "bootstrap/scss/button-group";
-@import "bootstrap/scss/nav";
-// @import "bootstrap/scss/navbar";
-// @import "bootstrap/scss/card";
-// @import "bootstrap/scss/accordion";
-// @import "bootstrap/scss/breadcrumb";
-// @import "bootstrap/scss/pagination";
-// @import "bootstrap/scss/badge";
-// @import "bootstrap/scss/alert";
-// @import "bootstrap/scss/progress";
-// @import "bootstrap/scss/list-group";
+@import 'bootstrap/scss/button-group';
+@import 'bootstrap/scss/nav';
+// @import 'bootstrap/scss/navbar';
+// @import 'bootstrap/scss/card';
+// @import 'bootstrap/scss/accordion';
+// @import 'bootstrap/scss/breadcrumb';
+// @import 'bootstrap/scss/pagination';
+// @import 'bootstrap/scss/badge';
+// @import 'bootstrap/scss/alert';
+// @import 'bootstrap/scss/progress';
+// @import 'bootstrap/scss/list-group';
 @import 'bootstrap/scss/close';
-// @import "bootstrap/scss/toasts";
+// @import 'bootstrap/scss/toasts';
 @import 'bootstrap/scss/modal';
 @import 'bootstrap/scss/tooltip';
-// @import "bootstrap/scss/popover";
-// @import "bootstrap/scss/carousel";
-@import "bootstrap/scss/spinners";
-// @import "bootstrap/scss/offcanvas";
-// @import "bootstrap/scss/placeholders";
+// @import 'bootstrap/scss/popover';
+// @import 'bootstrap/scss/carousel';
+@import 'bootstrap/scss/spinners';
+// @import 'bootstrap/scss/offcanvas';
+// @import 'bootstrap/scss/placeholders';
 @import 'bootstrap/scss/helpers';
 
 // Import Non-Bootstrap Components
 $bootstrap-icons-font-dir: 'bootstrap-icons/font/fonts';
 @import 'bootstrap-icons/font/bootstrap-icons';
-
-$custom-icons-font-family: 'custom-icons' !default;
-$custom-icons-font-path: '../assets/fonts' !default;
-
-$icon-aoco: '\e900';
-
-@font-face {
-	font-family: '#{$custom-icons-font-family}';
-	src: url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.eot?aoqow0');
-	src: url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.eot?aoqow0#iefix') format('embedded-opentype'),
-	url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.ttf?aoqow0') format('truetype'),
-	url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.woff?aoqow0') format('woff'),
-	url('#{$custom-icons-font-path}/#{$custom-icons-font-family}.svg?aoqow0##{$custom-icons-font-family}') format('svg');
-	font-weight: normal;
-	font-style: normal;
-	font-display: block;
-}
-
-.custom-icon {
-	/* use !important to prevent issues with browser extensions that change fonts */
-	font-family: '#{$custom-icons-font-family}' !important;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: 1;
-
-	/* Better Font Rendering =========== */
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}
-
-.icon-aoco {
-	&:before {
-		content: $icon-aoco;
-	}
-}
 
 .icon {
 	@extend a;
@@ -125,11 +88,10 @@ $icon-aoco: '\e900';
 	}
 }
 
-// Photography modal gallery
+// Photography gallery
 #ppGallery {
 	.pp-tile {
 		aspect-ratio: 1 / 1;
-
 	}
 
 	.pp-img {
@@ -137,7 +99,7 @@ $icon-aoco: '\e900';
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		transition: .25s ease;
+		transition: 0.25s ease;
 		margin-bottom: 0;
 	}
 
@@ -150,7 +112,7 @@ $icon-aoco: '\e900';
 		height: 100%;
 		width: 100%;
 		opacity: 0;
-		transition: .25s ease;
+		transition: 0.25s ease;
 		background-color: var(--bs-primary);
 	}
 
@@ -158,4 +120,10 @@ $icon-aoco: '\e900';
 		opacity: 0.3;
 		cursor: pointer;
 	}
+}
+
+.cc-icon {
+	max-width: 1em;
+	max-height: 1em;
+	margin-left: 0.2em;
 }
