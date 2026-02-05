@@ -16,7 +16,7 @@ module.exports = {
 	entry: './src/ts/main.ts',
 	output: {
 		filename: 'bundle.[contenthash].js',
-		path: path.resolve(__dirname, 'docs'),
+		path: path.resolve(__dirname, 'dist'),
 		publicPath: '/',
 	},
 	plugins: [
@@ -45,6 +45,8 @@ module.exports = {
 		new CopyWebpackPlugin({
 			patterns: [
 				{ from: 'src/assets', to: 'assets', noErrorOnMissing: true },
+				{ from: 'src/_redirects', to: '', noErrorOnMissing: true },
+				{ from: 'src/_headers', to: '', noErrorOnMissing: true },
 			],
 		}),
 		new CompressionPlugin({

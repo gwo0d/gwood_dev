@@ -9,7 +9,7 @@ module.exports = merge(common, {
 		publicPath: '/',
 	},
 	devServer: {
-		static: path.resolve(__dirname, 'docs'),
+		static: path.resolve(__dirname, 'dist'),
 		port: 8080,
 		hot: false,
 		historyApiFallback: true,

@@ -1,0 +1,10 @@
+name = "gwood-dev"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "dist"
+
+[vars]
+# Add any environment variables here if needed
+
+[[pages_build_config]]
+build_command = "npm run build"
+destination_dir = "dist"

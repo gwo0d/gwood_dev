@@ -6,7 +6,7 @@ module.exports = merge(common, {
 	mode: 'development',
 	devtool: 'source-map',
 	devServer: {
-		static: path.resolve(__dirname, 'docs'),
+		static: path.resolve(__dirname, 'dist'),
 		port: 8080,
 		hot: true,
 		compress: true,
