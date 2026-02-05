@@ -3,6 +3,7 @@ import {
 	AppBskyFeedDefs,
 	AppBskyEmbedImages,
 	AppBskyEmbedRecordWithMedia,
+	AppBskyFeedPost,
 } from '@atproto/api';
 
 const agent = new AtpAgent({ service: 'https://api.bsky.app' });
@@ -10,19 +11,28 @@ const agent = new AtpAgent({ service: 'https://api.bsky.app' });
 export const BSKY_USERNAME = 'gwood.dev';
 export const PHOTO_QUERY = '\u{1F39E} | \u{1F4F7}';
 
-type PhotoImage = {
+interface PhotoImage {
 	fullsize: string;
 	thumb?: string;
 	alt?: string;
-};
+}
 
-type PhotoPost = {
+interface PhotoPost {
 	postUri: string;
 	authorHandle: string;
 	text: string;
 	createdAt?: string;
 	images: PhotoImage[];
-};
+}
+
+function isPostRecord(value: unknown): value is AppBskyFeedPost.Record {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		'$type' in value &&
+		(value as { $type: string }).$type === 'app.bsky.feed.post'
+	);
+}
 
 function extractImagesFromPost(post: AppBskyFeedDefs.PostView): PhotoImage[] {
 	const out: PhotoImage[] = [];
@@ -69,14 +79,34 @@ function extractImagesFromPost(post: AppBskyFeedDefs.PostView): PhotoImage[] {
 }
 
 function toPhotoPost(post: AppBskyFeedDefs.PostView): PhotoPost {
-	const record = post.record as
-		| { text?: string; createdAt?: string }
-		| undefined;
+	let text = '';
+	let createdAt: string | undefined;
+
+	if (isPostRecord(post.record)) {
+		text = post.record.text;
+		createdAt = post.record.createdAt;
+	} else {
+		// Fallback for when type check fails but it looks like a record (duck typing)
+		// or if strict checking fails, we just try to read properties safely if we must.
+		// However, adhering to the type guard is safer.
+		// Use partial type for loose casting if strict check fails?
+		// For now, let's assume if it's not a valid record type, we treat text as empty.
+		// But in reality, the API often returns records without $type explicitly set in some contexts?
+		// Actually, let's try a safer cast.
+		const record = post.record as
+			| { text?: string; createdAt?: string }
+			| undefined;
+		if (record) {
+			text = record.text ?? '';
+			createdAt = record.createdAt;
+		}
+	}
+
 	return {
 		postUri: post.uri,
 		authorHandle: post.author.handle,
-		text: record?.text ?? '',
-		createdAt: record?.createdAt,
+		text,
+		createdAt,
 		images: extractImagesFromPost(post),
 	};
 }
@@ -87,26 +117,31 @@ export async function fetchPhotoPostsPage(params?: {
 	pageSize?: number;
 }) {
 	const limit = Math.min(Math.max(params?.pageSize ?? 60, 1), 60); // API cap: 100
-	const res = await agent.app.bsky.feed.searchPosts({
-		q: PHOTO_QUERY,
-		author: BSKY_USERNAME,
-		limit,
-		sort: 'top',
-		cursor: params?.cursor,
-	});
+	try {
+		const res = await agent.app.bsky.feed.searchPosts({
+			q: PHOTO_QUERY,
+			author: BSKY_USERNAME,
+			limit,
+			sort: 'top',
+			cursor: params?.cursor,
+		});
 
-	if (!res.success) throw new Error('Error fetching Bluesky posts.');
-	const posts = res.data.posts as AppBskyFeedDefs.PostView[];
+		if (!res.success) throw new Error('Error fetching Bluesky posts.');
+		const posts = res.data.posts as AppBskyFeedDefs.PostView[];
 
-	const photoPosts = posts
-		.map(toPhotoPost)
-		.filter((p) => p.images.length > 0);
+		const photoPosts = posts
+			.map(toPhotoPost)
+			.filter((p) => p.images.length > 0);
 
-	return {
-		cursor: res.data.cursor,
-		photoPosts,
-		raw: res.data, // keep if you need anything else
-	};
+		return {
+			cursor: res.data.cursor,
+			photoPosts,
+			raw: res.data,
+		};
+	} catch (error) {
+		console.error('Failed to fetch posts page:', error);
+		throw error; // Re-throw to be handled by caller
+	}
 }
 
 // Fetch multiple pages until you have N photo posts or run out
@@ -115,15 +150,20 @@ export async function fetchPhotos(maxPhotos = 50) {
 	let cursor: string | undefined = undefined;
 
 	while (all.length < maxPhotos) {
-		const { photoPosts, cursor: next } = await fetchPhotoPostsPage({
-			cursor,
-			pageSize: 60,
-		});
+		try {
+			const { photoPosts, cursor: next } = await fetchPhotoPostsPage({
+				cursor,
+				pageSize: 60,
+			});
 
-		all.push(...photoPosts);
+			all.push(...photoPosts);
 
-		if (!next || photoPosts.length === 0) break;
-		cursor = next;
+			if (!next || photoPosts.length === 0) break;
+			cursor = next;
+		} catch (error) {
+			console.error('Error in fetchPhotos loop:', error);
+			break; // Stop fetching on error
+		}
 	}
 
 	return all.slice(0, maxPhotos);
@@ -202,25 +242,28 @@ async function ensurePhotosLoaded() {
 	}
 }
 
-// Listen for Bootstrap modal show event
-document.addEventListener('shown.bs.modal', (e) => {
-	const target = e.target as HTMLElement | null;
-	if (target && target.id === 'ppModal') {
-		void ensurePhotosLoaded();
-	}
-});
-
-// Event Delegation for Gallery Items
-const galleryContainer = document.getElementById('ppGallery');
-if (galleryContainer) {
-	galleryContainer.addEventListener('click', (event) => {
-		const target = event.target as HTMLElement;
-		const overlay = target.closest('.overlay');
-		if (!overlay || !(overlay instanceof HTMLElement)) return;
-
-		const url = overlay.dataset.bskyUrl;
-		if (url) {
-			window.open(url, '_blank', 'noopener');
+// Init function to be called from main.ts
+export function initPhotography() {
+	// Listen for Bootstrap modal show event
+	document.addEventListener('shown.bs.modal', (e) => {
+		const target = e.target as HTMLElement | null;
+		if (target && target.id === 'ppModal') {
+			void ensurePhotosLoaded();
 		}
 	});
+
+	// Event Delegation for Gallery Items
+	const galleryContainer = document.getElementById('ppGallery');
+	if (galleryContainer) {
+		galleryContainer.addEventListener('click', (event) => {
+			const target = event.target as HTMLElement;
+			const overlay = target.closest('.overlay');
+			if (!overlay || !(overlay instanceof HTMLElement)) return;
+
+			const url = overlay.dataset.bskyUrl;
+			if (url) {
+				window.open(url, '_blank', 'noopener');
+			}
+		});
+	}
 }
