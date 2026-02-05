@@ -244,13 +244,23 @@ async function ensurePhotosLoaded() {
 
 // Init function to be called from main.ts
 export function initPhotography() {
+	const modalId = 'ppModal';
 	// Listen for Bootstrap modal show event
-	document.addEventListener('shown.bs.modal', (e) => {
+	document.addEventListener('show.bs.modal', (e) => {
 		const target = e.target as HTMLElement | null;
-		if (target && target.id === 'ppModal') {
+		if (target && target.id === modalId) {
 			void ensurePhotosLoaded();
 		}
 	});
+
+	// If the modal is already open or opening (e.g. strict lazy loading), fetch immediately
+	const modal = document.getElementById(modalId);
+	if (
+		modal &&
+		(modal.classList.contains('show') || modal.style.display === 'block')
+	) {
+		void ensurePhotosLoaded();
+	}
 
 	// Event Delegation for Gallery Items
 	const galleryContainer = document.getElementById('ppGallery');
