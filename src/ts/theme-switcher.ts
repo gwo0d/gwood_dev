@@ -129,9 +129,6 @@
 		if (focus) themeSwitcherBtn.focus();
 	};
 
-	// Apply initial theme and reflect in UI
-	setTheme(getPreferredTheme());
-
 	// Respond to OS theme changes only when using Auto (or when nothing explicit is stored).
 	window
 		.matchMedia('(prefers-color-scheme: dark)')
@@ -152,11 +149,10 @@
 	});
 
 	const init = (): void => {
-		// If nothing stored, initialize to auto so the UI highlights Auto by default.
-		if (!getStoredTheme()) {
-			setStoredTheme('auto');
-		}
-		showActiveTheme(getPreferredTheme());
+		const currentTheme = getPreferredTheme();
+		// Ensure the theme is correctly applied (in case head script was missed or for late-loading sync)
+		setTheme(currentTheme);
+		showActiveTheme(currentTheme);
 
 		document
 			.querySelectorAll<HTMLElement>('[data-bs-theme-value]')
