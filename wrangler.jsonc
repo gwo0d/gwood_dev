@@ -4,14 +4,5 @@
 	"pages_build_output_dir": "dist",
 	"vars": {
 		// Add any environment variables here if needed
-	},
-	"pages_build_config": [
-		{
-			"build_command": "npm run build",
-			"destination_dir": "dist",
-			"not_found_handling": "404-page",
-			"minify": true,
-			"keep_names": false
-		}
-	]
+	}
 }
