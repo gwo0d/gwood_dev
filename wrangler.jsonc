@@ -11,7 +11,7 @@
 			"destination_dir": "dist",
 			"not_found_handling": "404-page",
 			"minify": true,
-			"keep_names": false,
-		},
-	],
+			"keep_names": false
+		}
+	]
 }
