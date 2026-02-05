@@ -4,6 +4,8 @@ import { defineConfig } from 'vite';
 import viteCompression from 'vite-plugin-compression';
 import { randomBytes } from 'crypto';
 import fs from 'fs';
+import { load } from 'cheerio';
+import { minify } from 'html-minifier-terser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,15 +14,26 @@ const __dirname = dirname(__filename);
 const nonce = randomBytes(16).toString('base64');
 
 // Custom plugin to inject nonce and generate _headers
-const cspPlugin = () => {
+const cspPlugin = ({ minifyHtml }: { minifyHtml: boolean }) => {
 	return {
 		name: 'csp-nonce-plugin',
-		transformIndexHtml(html: string) {
-			// Inject nonce into the inline script
-			return html.replace(
-				/<script data-cfasync="false">/g,
-				`<script data-cfasync="false" nonce="${nonce}">`
-			);
+		async transformIndexHtml(html: string) {
+			const $ = load(html);
+			$('script[data-cfasync="false"]').attr('nonce', nonce);
+			const modifiedHtml = $.html();
+
+			if (minifyHtml) {
+				const minifiedHtml = await minify(modifiedHtml, {
+					collapseWhitespace: true,
+					removeComments: true,
+					minifyJS: true,
+					minifyCSS: true,
+				});
+
+				return minifiedHtml;
+			}
+
+			return modifiedHtml;
 		},
 		closeBundle() {
 			// Generate _headers with the nonce
@@ -49,42 +62,45 @@ const cspPlugin = () => {
 	};
 };
 
-export default defineConfig({
-	root: '.', // root is current directory
-	build: {
-		outDir: 'dist',
-		assetsDir: 'assets', // default
-		emptyOutDir: true,
-		rollupOptions: {
-			input: {
-				main: resolve(__dirname, 'index.html'),
-				not_found: resolve(__dirname, '404.html'),
+export default defineConfig(({ mode }) => {
+	const isProduction = mode === 'production';
+	return {
+		root: '.', // root is current directory
+		build: {
+			outDir: 'dist',
+			assetsDir: 'assets', // default
+			emptyOutDir: true,
+			rollupOptions: {
+				input: {
+					main: resolve(__dirname, 'index.html'),
+					not_found: resolve(__dirname, '404.html'),
+				},
 			},
 		},
-	},
-	plugins: [
-		cspPlugin(),
-		viteCompression({
-			algorithm: 'gzip',
-			ext: '.gz',
-		}),
-		viteCompression({
-			algorithm: 'brotliCompress',
-			ext: '.br',
-		}),
-	],
-	css: {
-		preprocessorOptions: {
-			scss: {
-				api: 'modern-compiler',
-				silenceDeprecations: [
-					'color-functions',
-					'global-builtin',
-					'import',
-					'legacy-js-api',
-					'if-function',
-				],
+		plugins: [
+			cspPlugin({ minifyHtml: isProduction }),
+			viteCompression({
+				algorithm: 'gzip',
+				ext: '.gz',
+			}),
+			viteCompression({
+				algorithm: 'brotliCompress',
+				ext: '.br',
+			}),
+		],
+		css: {
+			preprocessorOptions: {
+				scss: {
+					api: 'modern-compiler',
+					silenceDeprecations: [
+						'color-functions',
+						'global-builtin',
+						'import',
+						'legacy-js-api',
+						'if-function',
+					],
+				},
 			},
 		},
-	},
+	};
 });
