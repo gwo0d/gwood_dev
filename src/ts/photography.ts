@@ -254,13 +254,22 @@ export function initPhotography() {
 	});
 
 	// If the modal is already open or opening (e.g. strict lazy loading), fetch immediately
-	const modal = document.getElementById(modalId);
-	if (
-		modal &&
-		(modal.classList.contains('show') || modal.style.display === 'block')
-	) {
-		void ensurePhotosLoaded();
-	}
+	// We also use a short timeout to catch race conditions where the modal is transitioning
+	// but the 'show' class or display style hasn't been applied yet.
+	const checkAndLoad = () => {
+		const modal = document.getElementById(modalId);
+		if (
+			modal &&
+			(modal.classList.contains('show') ||
+				modal.style.display === 'block' ||
+				document.body.classList.contains('modal-open'))
+		) {
+			void ensurePhotosLoaded();
+		}
+	};
+
+	checkAndLoad();
+	setTimeout(checkAndLoad, 100);
 
 	// Event Delegation for Gallery Items
 	const galleryContainer = document.getElementById('ppGallery');
