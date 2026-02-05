@@ -45,7 +45,6 @@ module.exports = {
 		new CopyWebpackPlugin({
 			patterns: [
 				{ from: 'src/assets', to: 'assets', noErrorOnMissing: true },
-				{ from: 'src/_redirects', to: '', noErrorOnMissing: true },
 				{ from: 'src/_headers', to: '', noErrorOnMissing: true },
 			],
 		}),
