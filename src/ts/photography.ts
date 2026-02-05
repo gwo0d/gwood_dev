@@ -6,7 +6,9 @@ import {
 } from '@atproto/api';
 
 const agent = new AtpAgent({ service: 'https://api.bsky.app' });
-const username = 'gwood.dev';
+
+export const BSKY_USERNAME = 'gwood.dev';
+export const PHOTO_QUERY = '\u{1F39E} | \u{1F4F7}';
 
 type PhotoImage = {
 	fullsize: string;
@@ -24,16 +26,23 @@ type PhotoPost = {
 
 function extractImagesFromPost(post: AppBskyFeedDefs.PostView): PhotoImage[] {
 	const out: PhotoImage[] = [];
-	const embed = post.embed as
-		| AppBskyEmbedImages.View
-		| AppBskyEmbedRecordWithMedia.View
-		| undefined;
+	const embed = post.embed;
 
 	if (!embed) return out;
 
+	const isImagesEmbed = (value: unknown): value is AppBskyEmbedImages.View =>
+		(value as AppBskyEmbedImages.View)?.$type ===
+		'app.bsky.embed.images#view';
+
+	const isRecordWithMedia = (
+		value: unknown
+	): value is AppBskyEmbedRecordWithMedia.View =>
+		(value as AppBskyEmbedRecordWithMedia.View)?.$type ===
+		'app.bsky.embed.recordWithMedia#view';
+
 	// Direct images
-	if ((embed as any)?.$type === 'app.bsky.embed.images#view') {
-		for (const img of (embed as AppBskyEmbedImages.View).images ?? []) {
+	if (isImagesEmbed(embed)) {
+		for (const img of embed.images ?? []) {
 			out.push({
 				fullsize: img.fullsize,
 				thumb: img.thumb,
@@ -43,10 +52,10 @@ function extractImagesFromPost(post: AppBskyFeedDefs.PostView): PhotoImage[] {
 	}
 
 	// Record with media (may contain images)
-	if ((embed as any)?.$type === 'app.bsky.embed.recordWithMedia#view') {
-		const media = (embed as AppBskyEmbedRecordWithMedia.View).media;
-		if ((media as any)?.$type === 'app.bsky.embed.images#view') {
-			for (const img of (media as AppBskyEmbedImages.View).images ?? []) {
+	if (isRecordWithMedia(embed)) {
+		const media = embed.media;
+		if (isImagesEmbed(media)) {
+			for (const img of media.images ?? []) {
 				out.push({
 					fullsize: img.fullsize,
 					thumb: img.thumb,
@@ -79,8 +88,8 @@ export async function fetchPhotoPostsPage(params?: {
 }) {
 	const limit = Math.min(Math.max(params?.pageSize ?? 60, 1), 60); // API cap: 100
 	const res = await agent.app.bsky.feed.searchPosts({
-		q: '\u{1F39E} | \u{1F4F7}',
-		author: username,
+		q: PHOTO_QUERY,
+		author: BSKY_USERNAME,
 		limit,
 		sort: 'top',
 		cursor: params?.cursor,
@@ -154,10 +163,14 @@ function renderGallery(photos: PhotoPost[]) {
 
 			figure.appendChild(image);
 
-			const overlay = document.createElement('div');
+			const overlay = document.createElement('button');
+			overlay.type = 'button';
 			overlay.className = 'overlay rounded';
+			const ariaLabel =
+				img.alt?.trim() || post.text?.trim() || 'Open post on BlueSky';
+			overlay.setAttribute('aria-label', ariaLabel);
 
-			// Open the original post on BlueSky when clicked
+			// Open the original post on BlueSky when activated
 			overlay.addEventListener('click', () => {
 				const postId = post.postUri.split('/').pop();
 				window.open(
@@ -179,21 +192,18 @@ function renderGallery(photos: PhotoPost[]) {
 let photosLoaded = false;
 async function ensurePhotosLoaded() {
 	if (photosLoaded) return;
+	const status = document.getElementById('ppGalleryStatus');
+	if (status) status.classList.remove('visually-hidden');
 	try {
-		const status = document.getElementById('ppGalleryStatus');
-		if (status) status.classList.remove('visually-hidden');
 		const photos = await fetchPhotos(60);
 		renderGallery(photos);
+		photosLoaded = true;
 	} catch (err) {
-		const status = document.getElementById('ppGalleryStatus');
 		if (status) {
 			status.className = 'col text-danger text-center';
 			status.textContent = 'Failed to load photos.';
 		}
-		// eslint-disable-next-line no-console
 		console.error(err);
-	} finally {
-		photosLoaded = true;
 	}
 }
 

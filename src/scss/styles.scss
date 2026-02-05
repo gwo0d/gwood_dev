@@ -111,6 +111,8 @@ $bootstrap-icons-font-dir: 'bootstrap-icons/font/fonts';
 		right: 0;
 		height: 100%;
 		width: 100%;
+		border: 0;
+		padding: 0;
 		opacity: 0;
 		transition: 0.25s ease;
 		background-color: var(--bs-primary);

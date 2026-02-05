@@ -21,6 +21,5 @@ import './theme-switcher';
 document
 	.querySelectorAll<HTMLElement>('[data-bs-toggle="tooltip"]')
 	.forEach((tooltip) => {
-		// eslint-disable-next-line no-new
 		new Tooltip(tooltip);
 	});

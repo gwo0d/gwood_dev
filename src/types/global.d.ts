@@ -4,6 +4,6 @@ declare module '*.scss' {
 }
 
 declare module 'bootstrap/js/dist/*' {
-	const Component: any;
+	const Component: new (...args: unknown[]) => unknown;
 	export default Component;
 }

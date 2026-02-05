@@ -4,7 +4,7 @@ This is the source code for my personal website, [gwood.dev](https://gwood.dev).
 
 ## Tech Stack
 
-- [Webpack](https://webpack.js.org/)
+- [Vite](https://vitejs.dev/)
 - [Bootstrap](https://getbootstrap.com/)
 - [Sass](https://sass-lang.com/)
 
@@ -28,23 +28,23 @@ This is the source code for my personal website, [gwood.dev](https://gwood.dev).
 
 ### Running the development server
 
-To start the development server, run the following command:
-
 ```bash
-npm start
+npm run dev
 ```
 
-This will start a local server, typically at `http://localhost:8080`.
+This starts Vite at its default host/port (typically `http://localhost:5173`).
 
 ### Building for production
-
-To build the project for production, run the following command:
 
 ```bash
 npm run build
 ```
 
-This will create a `dist` directory with the production-ready files.
+### Previewing the production build locally
+
+```bash
+npm run preview
+```
 
 ## Copyright and Licensing
 
@@ -70,8 +70,4 @@ You can view the full license [here](https://creativecommons.org/licenses/by-nc-
 
 ### Website Source Code
 
-All underlying source code used to generate and display this website, including but not limited to HTML, SCSS, CSS, and JavaScript files, is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
-
-This license grants you the freedom to run, study, share, and modify the software. Any derivative works or modifications must also be licensed under the GPL-3.0.
-
-You can view the full license [here](/LICENSE.md).
+All underlying source code used to generate and display this website, including but not limited to HTML, SCSS, CSS, and JavaScript files, is licensed under the **GNU General Public License v3.0 (GPL-3.0)**. You can view the full license [here](/LICENSE.md).
