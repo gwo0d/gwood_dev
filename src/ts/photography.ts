@@ -171,14 +171,9 @@ function renderGallery(photos: PhotoPost[]) {
 			overlay.setAttribute('aria-label', ariaLabel);
 
 			// Open the original post on BlueSky when activated
-			overlay.addEventListener('click', () => {
-				const postId = post.postUri.split('/').pop();
-				window.open(
-					`https://bsky.app/profile/${post.authorHandle}/post/${postId}`,
-					'_blank',
-					'noopener'
-				);
-			});
+			const postId = post.postUri.split('/').pop();
+			const bskyUrl = `https://bsky.app/profile/${post.authorHandle}/post/${postId}`;
+			overlay.setAttribute('data-bsky-url', bskyUrl);
 
 			figure.appendChild(overlay);
 			col.appendChild(figure);
@@ -214,3 +209,18 @@ document.addEventListener('shown.bs.modal', (e) => {
 		void ensurePhotosLoaded();
 	}
 });
+
+// Event Delegation for Gallery Items
+const galleryContainer = document.getElementById('ppGallery');
+if (galleryContainer) {
+	galleryContainer.addEventListener('click', (event) => {
+		const target = event.target as HTMLElement;
+		const overlay = target.closest('.overlay');
+		if (!overlay || !(overlay instanceof HTMLElement)) return;
+
+		const url = overlay.dataset.bskyUrl;
+		if (url) {
+			window.open(url, '_blank', 'noopener');
+		}
+	});
+}
