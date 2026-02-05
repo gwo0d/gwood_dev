@@ -151,7 +151,7 @@
 		showActiveTheme(next);
 	});
 
-	window.addEventListener('DOMContentLoaded', () => {
+	const init = (): void => {
 		// If nothing stored, initialize to auto so the UI highlights Auto by default.
 		if (!getStoredTheme()) {
 			setStoredTheme('auto');
@@ -172,5 +172,11 @@
 					showActiveTheme(theme, true);
 				});
 			});
-	});
+	};
+
+	if (document.readyState === 'loading') {
+		window.addEventListener('DOMContentLoaded', init);
+	} else {
+		init();
+	}
 })();
