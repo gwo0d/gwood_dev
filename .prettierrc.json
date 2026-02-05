@@ -3,5 +3,13 @@
 	"singleQuote": true,
 	"trailingComma": "es5",
 	"tabWidth": 4,
-	"useTabs": true
+	"useTabs": true,
+	"overrides": [
+		{
+			"files": "wrangler.jsonc",
+			"options": {
+				"trailingComma": "none"
+			}
+		}
+	]
 }

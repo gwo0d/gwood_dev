@@ -51,43 +51,66 @@ const setTheme = (theme: Theme): void => {
 	}
 };
 
+// Module-level cache variables to avoid repeated DOM queries
+let cachedThemeSwitcherBtn: HTMLButtonElement | null = null;
+let cachedThemeSwitcherBtnIcon: HTMLElement | null = null;
+let cachedThemeBtns: HTMLElement[] | null = null;
+const cachedThemeBtnMap = new Map<Theme, HTMLElement>();
+
 // Sync the dropdown UI and the trigger button's icon/label.
 const showActiveTheme = (theme: Theme, focus: boolean = false): void => {
-	const themeSwitcherBtn =
-		document.querySelector<HTMLButtonElement>('#bd-theme');
-	const themeSwitcherBtnIcon =
-		themeSwitcherBtn?.querySelector<HTMLElement>('i');
-	const themeSafe: Theme = isValidTheme(theme) ? theme : 'auto';
-	const btnToActivate = document.querySelector<HTMLElement>(
-		`[data-bs-theme-value="${themeSafe}"]`
-	);
+	// Initialize cache lazily
+	if (!cachedThemeSwitcherBtn) {
+		cachedThemeSwitcherBtn =
+			document.querySelector<HTMLButtonElement>('#bd-theme');
+		if (cachedThemeSwitcherBtn) {
+			cachedThemeSwitcherBtnIcon =
+				cachedThemeSwitcherBtn.querySelector<HTMLElement>('i');
+		}
+	}
 
-	if (!themeSwitcherBtn || !btnToActivate) return;
+	if (!cachedThemeBtns) {
+		cachedThemeBtns = Array.from(
+			document.querySelectorAll<HTMLElement>('[data-bs-theme-value]')
+		);
+		cachedThemeBtns.forEach((btn) => {
+			const val = btn.getAttribute('data-bs-theme-value');
+			if (isValidTheme(val)) {
+				cachedThemeBtnMap.set(val, btn);
+			}
+		});
+	}
+
+	const switcherBtn = cachedThemeSwitcherBtn;
+	const switcherIcon = cachedThemeSwitcherBtnIcon;
+
+	const themeSafe: Theme = isValidTheme(theme) ? theme : 'auto';
+	const btnToActivate = cachedThemeBtnMap.get(themeSafe);
+
+	if (!switcherBtn || !btnToActivate) return;
 
 	// Update active state for menu items
-	document
-		.querySelectorAll<HTMLElement>('[data-bs-theme-value]')
-		.forEach((el) => {
-			el.classList.remove('active');
-			el.setAttribute('aria-pressed', 'false');
-		});
+	cachedThemeBtns?.forEach((el) => {
+		el.classList.remove('active');
+		el.setAttribute('aria-pressed', 'false');
+	});
 	btnToActivate.classList.add('active');
 	btnToActivate.setAttribute('aria-pressed', 'true');
 
 	// Update the trigger button icon to match the chosen theme.
-	if (themeSwitcherBtnIcon) {
+	if (switcherIcon) {
 		const iconMap: Record<Theme, string> = {
 			light: 'bi-hexagon',
 			dark: 'bi-hexagon-fill',
 			auto: 'bi-hexagon-half',
 		};
 		const allIcons = ['bi-hexagon', 'bi-hexagon-fill', 'bi-hexagon-half'];
-		allIcons.forEach((c) => themeSwitcherBtnIcon.classList.remove(c));
-		themeSwitcherBtnIcon.classList.add(iconMap[themeSafe]);
+		allIcons.forEach((c) => switcherIcon.classList.remove(c));
+		switcherIcon.classList.add(iconMap[themeSafe]);
 	}
 
 	// Remove any previously-added visible label.
-	const existingLabel = themeSwitcherBtn.querySelector<HTMLSpanElement>(
+	const existingLabel = switcherBtn.querySelector<HTMLSpanElement>(
 		'span[data-theme-label]'
 	);
 	if (existingLabel) existingLabel.remove();
@@ -98,24 +121,24 @@ const showActiveTheme = (theme: Theme, focus: boolean = false): void => {
 		dark: 'Theme: Dark',
 		auto: 'Theme: Auto (follows system)',
 	};
-	themeSwitcherBtn.setAttribute('aria-label', labelMap[themeSafe]);
+	switcherBtn.setAttribute('aria-label', labelMap[themeSafe]);
 
 	// Also provide an SR-only label inside the button (redundant but safe)
 	const getOrCreateSrLabel = (): HTMLSpanElement => {
-		let span = themeSwitcherBtn.querySelector<HTMLSpanElement>(
+		let span = switcherBtn.querySelector<HTMLSpanElement>(
 			'span[data-theme-sr-label]'
 		);
 		if (!span) {
 			span = document.createElement('span');
 			span.setAttribute('data-theme-sr-label', '');
 			span.className = 'visually-hidden';
-			themeSwitcherBtn.appendChild(span);
+			switcherBtn.appendChild(span);
 		}
 		return span;
 	};
 	getOrCreateSrLabel().textContent = labelMap[themeSafe];
 
-	if (focus) themeSwitcherBtn.focus();
+	if (focus) switcherBtn.focus();
 };
 
 export function initThemeSwitcher(): void {
