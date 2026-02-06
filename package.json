@@ -5,9 +5,10 @@
 	"type": "module",
 	"main": "main.js",
 	"scripts": {
-		"dev": "vite",
+		"dev": "npm run generate:icons && vite",
+		"generate:icons": "tsx scripts/generate-icons.ts",
 		"generate:blog": "tsx scripts/build-blog.ts",
-		"build": "npm run generate:blog && vite build",
+		"build": "npm run generate:icons && npm run generate:blog && vite build",
 		"preview": "vite preview",
 		"lint": "eslint . && prettier --check .",
 		"lint:fix": "eslint . --fix && prettier --write ."
@@ -16,10 +17,12 @@
 	"author": "George O. Wood",
 	"license": "GPL-3.0",
 	"devDependencies": {
+		"@fullhuman/postcss-purgecss": "^8.0.0",
 		"@types/html-minifier-terser": "^7.0.2",
 		"@types/marked": "^5.0.2",
 		"@types/node": "^24.3.0",
 		"autoprefixer": "^10.4.21",
+		"bootstrap-icons": "^1.13.1",
 		"cheerio": "^1.2.0",
 		"eslint": "^9.32.0",
 		"eslint-config-prettier": "^10.1.8",
@@ -28,6 +31,7 @@
 		"gray-matter": "^4.0.3",
 		"html-minifier-terser": "^7.2.0",
 		"marked": "^17.0.1",
+		"postcss": "^8.5.6",
 		"prettier": "^3.6.2",
 		"sass": "^1.89.2",
 		"tsx": "^4.21.0",
@@ -38,8 +42,7 @@
 	"dependencies": {
 		"@atproto/api": "^0.16.3",
 		"@popperjs/core": "^2.11.8",
-		"bootstrap": "^5.3.7",
-		"bootstrap-icons": "^1.13.1"
+		"bootstrap": "^5.3.7"
 	},
 	"overrides": {}
 }

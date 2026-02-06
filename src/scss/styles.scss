@@ -68,8 +68,11 @@ $spinner-animation-speed: 1s;
 @import 'bootstrap/scss/helpers';
 
 // Import Non-Bootstrap Components
-$bootstrap-icons-font-dir: 'bootstrap-icons/font/fonts';
-@import 'bootstrap-icons/font/bootstrap-icons';
+.bi {
+	width: 1em;
+	height: 1em;
+	fill: currentColor;
+}
 
 .icon {
 	@extend a;

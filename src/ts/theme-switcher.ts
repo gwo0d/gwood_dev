@@ -71,7 +71,7 @@ const showActiveTheme = (theme: Theme, focus: boolean = false): void => {
 			document.querySelector<HTMLButtonElement>('#bd-theme');
 		if (cachedThemeSwitcherBtn) {
 			cachedThemeSwitcherBtnIcon =
-				cachedThemeSwitcherBtn.querySelector<HTMLElement>('i');
+				cachedThemeSwitcherBtn.querySelector<HTMLElement>('.bi');
 		}
 	}
 
@@ -110,9 +110,10 @@ const showActiveTheme = (theme: Theme, focus: boolean = false): void => {
 			dark: 'bi-hexagon-fill',
 			auto: 'bi-hexagon-half',
 		};
-		const allIcons = ['bi-hexagon', 'bi-hexagon-fill', 'bi-hexagon-half'];
-		allIcons.forEach((c) => switcherIcon.classList.remove(c));
-		switcherIcon.classList.add(iconMap[themeSafe]);
+		const use = switcherIcon.querySelector('use');
+		if (use) {
+			use.setAttribute('href', `/icons.svg#${iconMap[themeSafe]}`);
+		}
 	}
 
 	// Remove any previously-added visible label.
