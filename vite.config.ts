@@ -28,44 +28,87 @@ const cspPlugin = ({ minifyHtml }: { minifyHtml: boolean }) => {
 			return html;
 		},
 		closeBundle() {
-			// Generate _headers with the SHA-256 hash of the inline script
+			// Generate _headers with the SHA-256 hashes of the inline scripts
 			try {
-				const distIndexPath = resolve(__dirname, 'dist/index.html');
-				if (!fs.existsSync(distIndexPath)) {
+				const distDir = resolve(__dirname, 'dist');
+				if (!fs.existsSync(distDir)) {
 					console.warn(
-						'[csp-hash-plugin] dist/index.html not found, skipping CSP generation.'
+						'[csp-hash-plugin] dist directory not found, skipping CSP generation.'
 					);
 					return;
 				}
 
-				const html = fs.readFileSync(distIndexPath, 'utf-8');
-				const $ = load(html);
-				const scriptContent = $('script[data-cfasync="false"]').html();
+				const getHtmlFiles = (dir: string): string[] => {
+					let results: string[] = [];
+					const list = fs.readdirSync(dir);
+					list.forEach((file) => {
+						const filePath = resolve(dir, file);
+						const stat = fs.statSync(filePath);
+						if (stat && stat.isDirectory()) {
+							results = results.concat(getHtmlFiles(filePath));
+						} else if (file.endsWith('.html')) {
+							results.push(filePath);
+						}
+					});
+					return results;
+				};
 
-				if (!scriptContent) {
+				const htmlFiles = getHtmlFiles(distDir);
+				const hashes = new Set<string>();
+
+				htmlFiles.forEach((filePath) => {
+					const html = fs.readFileSync(filePath, 'utf-8');
+					const $ = load(html);
+					$('script[data-cfasync="false"]').each((_, el) => {
+						const scriptContent = $(el).html();
+						if (scriptContent) {
+							const hash = createHash('sha256')
+								.update(scriptContent)
+								.digest('base64');
+							hashes.add(`'sha256-${hash}'`);
+						}
+					});
+				});
+
+				if (hashes.size === 0) {
 					console.warn(
-						'[csp-hash-plugin] Target inline script not found.'
+						'[csp-hash-plugin] No target inline scripts found.'
 					);
 					return;
 				}
-
-				const hash = createHash('sha256')
-					.update(scriptContent)
-					.digest('base64');
 
 				const publicHeadersPath = resolve(__dirname, 'public/_headers');
-				const content = fs.readFileSync(publicHeadersPath, 'utf-8');
+				if (!fs.existsSync(publicHeadersPath)) {
+					console.warn(
+						'[csp-hash-plugin] public/_headers not found.'
+					);
+					return;
+				}
 
-				// Replace CSP: remove 'unsafe-inline' and add the hash
+				const content = fs.readFileSync(publicHeadersPath, 'utf-8');
+				const hashString = Array.from(hashes).join(' ');
+
+				// Replace CSP: remove 'unsafe-inline' and add the hashes
 				const newContent = content.replace(
-					/script-src 'self' 'unsafe-inline'/,
-					`script-src 'self' 'sha256-${hash}'`
+					/'unsafe-inline'/g,
+					(match, offset, string) => {
+						// Only replace if it's part of script-src
+						const lineStart = string.lastIndexOf('\n', offset) + 1;
+						const line = string.substring(
+							lineStart,
+							string.indexOf('\n', offset)
+						);
+						if (line.includes('script-src')) {
+							return hashString;
+						}
+						return match;
+					}
 				);
 
 				const distHeadersPath = resolve(__dirname, 'dist/_headers');
 				fs.writeFileSync(distHeadersPath, newContent);
 				console.log(
-					`[csp-hash-plugin] Generated _headers with hash: sha256-${hash}`
+					`[csp-hash-plugin] Generated _headers with ${hashes.size} unique hashes.`
 				);
 			} catch (e) {
 				console.error(
