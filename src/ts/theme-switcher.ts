@@ -49,6 +49,12 @@ const setTheme = (theme: Theme): void => {
 	if (current !== target) {
 		document.documentElement.setAttribute('data-bs-theme', target);
 	}
+	const favicon = document.getElementById(
+		'favicon'
+	) as HTMLLinkElement | null;
+	if (favicon) {
+		favicon.href = `/favicon-${target}.svg`;
+	}
 };
 
 // Module-level cache variables to avoid repeated DOM queries
