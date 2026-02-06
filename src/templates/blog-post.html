@@ -4,8 +4,8 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-		<title>George O. Wood</title>
-		<meta name="description" content="George O. Wood, PhD Candidate" />
+		<title>{{title}} - George O. Wood</title>
+		<meta name="description" content="{{description}}" />
 
 		<link
 			rel="icon"
@@ -61,79 +61,73 @@
 	</head>
 
 	<body>
-		<main class="container d-flex flex-column min-vh-100 text-center">
-			<div
-				class="flex-grow-1 d-flex flex-column align-items-center justify-content-center"
-			>
-				<h1 class="display-1 mb-3">Hi, I'm George.</h1>
-				<nav
-					class="d-flex gap-3 flex-wrap justify-content-center"
-					aria-label="Social links"
-				>
-					<a
-						href="https://bsky.app/profile/gwood.dev"
-						target="_blank"
-						rel="noopener noreferrer"
-						aria-label="BlueSky (opens in new tab)"
-						><i class="bi bi-bluesky icon"></i
-					></a>
-					<a
-						href="https://github.com/gwo0d"
-						target="_blank"
-						rel="noopener noreferrer"
-						aria-label="GitHub (opens in new tab)"
-						><i class="bi bi-github icon"></i
-					></a>
-					<a
-						href="#"
-						data-bs-toggle="modal"
-						data-bs-target="#ppModal"
-						aria-label="Photography Portfolio (modal on top of content)"
-						><i class="bi bi-image icon"></i
-					></a>
-					<a
-						href="https://orcid.org/0009-0009-3998-6499"
-						target="_blank"
-						rel="noopener noreferrer"
-						aria-label="ORCiD (opens in new tab)"
-						><i class="bi bi-mortarboard-fill icon"></i
-					></a>
-				</nav>
-				<div
-					class="d-flex flex-column align-items-center justify-content-center gap-2"
-				>
-					<a href="/blog/" class="text-decoration-none fw-bold"
-						>Read my blog</a
+		<main class="container d-flex flex-column min-vh-100">
+			<div class="row justify-content-center mt-4">
+				<div class="col-auto">
+					<nav
+						class="d-flex gap-3 flex-wrap justify-content-center align-items-center"
+						aria-label="Social links"
 					>
-					<a
-						class="icon-link d-inline-flex align-items-center"
-						href="https://keys.openpgp.org/vks/v1/by-fingerprint/8F23B1FCC3B0110B08C11EAEC6ED36301101A7A8"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						PGP: 0xC6ED36301101A7A8
-						<!-- 
-							Inline SVG used here due to known issue with vertical alignment in Bootstrap 5's "Icon Links" when `<i>` tags are used with the `bi` class.
-							Issue: https://github.com/twbs/bootstrap/issues/41432
-						-->
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="16"
-							height="16"
-							fill="currentColor"
-							class="bi bi-download"
-							viewBox="0 0 16 16"
+						<a
+							href="/"
+							aria-label="Home"
+							class="text-decoration-none text-reset fw-bold"
+							>George O. Wood</a
 						>
-							<path
-								d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
-							/>
-							<path
-								d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
-							/>
-						</svg>
-					</a>
+						<span class="text-muted">|</span>
+						<a
+							href="https://bsky.app/profile/gwood.dev"
+							target="_blank"
+							rel="noopener noreferrer"
+							aria-label="BlueSky (opens in new tab)"
+							><i class="bi bi-bluesky icon"></i
+						></a>
+						<a
+							href="https://github.com/gwo0d"
+							target="_blank"
+							rel="noopener noreferrer"
+							aria-label="GitHub (opens in new tab)"
+							><i class="bi bi-github icon"></i
+						></a>
+						<a
+							href="#"
+							data-bs-toggle="modal"
+							data-bs-target="#ppModal"
+							aria-label="Photography Portfolio (modal on top of content)"
+							><i class="bi bi-image icon"></i
+						></a>
+						<a
+							href="https://orcid.org/0009-0009-3998-6499"
+							target="_blank"
+							rel="noopener noreferrer"
+							aria-label="ORCiD (opens in new tab)"
+							><i class="bi bi-mortarboard-fill icon"></i
+						></a>
+					</nav>
 				</div>
 			</div>
+
+			<div class="flex-grow-1 mt-5">
+				<div class="row justify-content-center">
+					<div class="col-lg-8">
+						<div class="mb-4">
+							<a href="/blog/" class="text-decoration-none">
+								&larr; Return to posts list
+							</a>
+						</div>
+						<article class="blog-post">
+							<header class="mb-4 text-center">
+								<h1 class="fw-bolder mb-1">{{title}}</h1>
+								<div class="text-muted fst-italic mb-2">
+									{{date}}
+								</div>
+							</header>
+							<section class="mb-5">{{content}}</section>
+						</article>
+					</div>
+				</div>
+			</div>
+
 			<div class="btn-group dropstart m-3 theme-switcher">
 				<button
 					id="bd-theme"
@@ -165,7 +159,8 @@
 					</li>
 				</ul>
 			</div>
-			<div class="container text-center mt-auto">
+
+			<div class="container text-center mt-auto pb-3">
 				<div class="row justify-content-center">
 					<div class="col">
 						<footer>
@@ -221,6 +216,7 @@
 				</div>
 			</div>
 		</main>
+
 		<div
 			class="modal fade"
 			id="ppModal"
@@ -269,10 +265,6 @@
 								<div class="col-12">
 									<p>
 										See more on
-										<!-- 
-											Inline SVG used here due to known issue with vertical alignment in Bootstrap 5's "Icon Links" when `<i>` tags are used with the `bi` class.
-											Issue: https://github.com/twbs/bootstrap/issues/41432
-										-->
 										<a
 											class="icon-link"
 											href="https://bsky.app/profile/gwood.dev"

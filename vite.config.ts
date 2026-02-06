@@ -77,6 +77,25 @@ const cspPlugin = ({ minifyHtml }: { minifyHtml: boolean }) => {
 	};
 };
 
+const getHtmlEntries = (rootDir: string) => {
+	const entries: Record<string, string> = {
+		main: resolve(rootDir, 'index.html'),
+		not_found: resolve(rootDir, '404.html'),
+	};
+
+	const blogDir = resolve(rootDir, 'blog');
+	if (fs.existsSync(blogDir)) {
+		const files = fs.readdirSync(blogDir);
+		files.forEach((file) => {
+			if (file.endsWith('.html')) {
+				const name = `blog/${file.replace('.html', '')}`;
+				entries[name] = resolve(blogDir, file);
+			}
+		});
+	}
+	return entries;
+};
+
 export default defineConfig(({ mode }) => {
 	const isProduction = mode === 'production';
 	return {
@@ -86,10 +105,7 @@ export default defineConfig(({ mode }) => {
 			assetsDir: 'assets', // default
 			emptyOutDir: true,
 			rollupOptions: {
-				input: {
-					main: resolve(__dirname, 'index.html'),
-					not_found: resolve(__dirname, '404.html'),
-				},
+				input: getHtmlEntries(__dirname),
 			},
 		},
 		plugins: [
