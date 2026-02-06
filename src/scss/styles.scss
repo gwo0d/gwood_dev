@@ -77,6 +77,8 @@ $spinner-animation-speed: 1s;
 .icon {
 	@extend a;
 	@include font-size(2.5rem);
+	padding: 0.25em 0;
+	display: inline-block;
 }
 
 .theme-switcher {
