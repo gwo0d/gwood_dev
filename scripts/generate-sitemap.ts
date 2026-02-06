@@ -1,10 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
 import matter from 'gray-matter';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const BASE_URL = 'https://gwood.dev';
 const CONTENT_DIR = path.join(process.cwd(), 'src/content/blog');
@@ -13,7 +9,14 @@ const DIST_DIR = path.join(process.cwd(), 'dist');
 interface SitemapUrl {
 	loc: string;
 	lastmod?: string;
-	changefreq?: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
+	changefreq?:
+		| 'always'
+		| 'hourly'
+		| 'daily'
+		| 'weekly'
+		| 'monthly'
+		| 'yearly'
+		| 'never';
 	priority?: number;
 }
 
@@ -52,20 +55,20 @@ async function generateSitemap() {
 
 				const slug = file.replace('.md', '');
 
-                if (data.date) {
+				if (data.date) {
 					let dateStr = data.date;
 					// Ensure date is in YYYY-MM-DD format if it's a Date object
 					if (data.date instanceof Date) {
 						dateStr = data.date.toISOString().split('T')[0];
 					}
 
-                    urls.push({
-                        loc: `${BASE_URL}/blog/${slug}`,
-                        lastmod: dateStr,
-                        changefreq: 'monthly',
-                        priority: 0.6,
-                    });
-                }
+					urls.push({
+						loc: `${BASE_URL}/blog/${slug}`,
+						lastmod: dateStr,
+						changefreq: 'monthly',
+						priority: 0.6,
+					});
+				}
 			}
 		}
 
@@ -88,8 +91,9 @@ ${urls
 		await fs.mkdir(DIST_DIR, { recursive: true });
 
 		await fs.writeFile(path.join(DIST_DIR, 'sitemap.xml'), sitemap);
-		console.log(`Generated sitemap at ${path.join(DIST_DIR, 'sitemap.xml')}`);
-
+		console.log(
+			`Generated sitemap at ${path.join(DIST_DIR, 'sitemap.xml')}`
+		);
 	} catch (error) {
 		console.error('Error generating sitemap:', error);
 		process.exit(1);
