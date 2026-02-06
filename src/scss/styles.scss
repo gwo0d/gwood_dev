@@ -79,6 +79,12 @@ $spinner-animation-speed: 1s;
 	@include font-size(2.5rem);
 	padding: 0.25em 0;
 	display: inline-block;
+	line-height: 1;
+
+	// Ensure SVG inside scales correctly if not already handled
+	.bi {
+		vertical-align: top; // Aligns SVG within the line-height
+	}
 }
 
 .theme-switcher {
