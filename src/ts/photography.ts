@@ -116,7 +116,7 @@ export async function fetchPhotoPostsPage(params?: {
 	cursor?: string;
 	pageSize?: number;
 }) {
-	const limit = Math.min(Math.max(params?.pageSize ?? 60, 1), 60); // API cap: 100
+	const limit = Math.min(Math.max(params?.pageSize ?? 60, 1), 100); // API cap: 100
 	try {
 		const res = await agent.app.bsky.feed.searchPosts({
 			q: PHOTO_QUERY,
@@ -153,7 +153,8 @@ export async function fetchPhotos(maxPhotos = 50) {
 		try {
 			const { photoPosts, cursor: next } = await fetchPhotoPostsPage({
 				cursor,
-				pageSize: 60,
+				// Optimization: Request max batch size (100) to reduce round-trips
+				pageSize: 100,
 			});
 
 			all.push(...photoPosts);
