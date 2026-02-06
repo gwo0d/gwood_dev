@@ -2,7 +2,6 @@
 import '../scss/styles.scss';
 
 // Import Bootstrap’s JS
-import 'bootstrap/js/dist/button.js';
 import 'bootstrap/js/dist/dropdown.js';
 import 'bootstrap/js/dist/modal.js';
 import Tooltip from 'bootstrap/js/dist/tooltip.js';
