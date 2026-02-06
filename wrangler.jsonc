@@ -2,7 +2,5 @@
 	"name": "gwood-dev",
 	"compatibility_date": "2026-02-05",
 	"pages_build_output_dir": "dist",
-	"vars": {
-		// Add any environment variables here if needed
-	}
+	"vars": {}
 }

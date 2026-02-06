@@ -1,0 +1,22 @@
+// Custom Colors
+$primary: shade-color(#198754, 10%);
+
+// Light Mode
+$body-bg: #fff8ff;
+$body-color: #1c2826;
+
+// Dark Mode
+$body-bg-dark: $body-color;
+$body-color-dark: $body-bg;
+
+// Custom Fonts
+$font-family-base: 'JetBrains Mono', monospace;
+$font-size-base: 1.25rem;
+$font-family-monospace: 'JetBrains Mono', monospace;
+$headings-font-family: 'Noto Serif', serif;
+$headings-font-weight: 600;
+$display-font-weight: 700;
+
+// Other Variable Overrides
+$link-decoration: none;
+$spinner-animation-speed: 1s;
