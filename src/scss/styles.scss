@@ -68,12 +68,23 @@ $spinner-animation-speed: 1s;
 @import 'bootstrap/scss/helpers';
 
 // Import Non-Bootstrap Components
-$bootstrap-icons-font-dir: 'bootstrap-icons/font/fonts';
-@import 'bootstrap-icons/font/bootstrap-icons';
+.bi {
+	width: 1em;
+	height: 1em;
+	fill: currentColor;
+}
 
 .icon {
 	@extend a;
 	@include font-size(2.5rem);
+	padding: 0.25em 0;
+	display: inline-block;
+	line-height: 1;
+
+	// Ensure SVG inside scales correctly if not already handled
+	.bi {
+		vertical-align: top; // Aligns SVG within the line-height
+	}
 }
 
 .theme-switcher {
