@@ -9,23 +9,10 @@
 
 		<link
 			rel="icon"
-			type="image/png"
-			href="/assets/favicon/favicon-96x96.png"
-			sizes="96x96"
-		/>
-		<link
-			rel="icon"
+			id="favicon"
 			type="image/svg+xml"
-			href="/assets/favicon/favicon.svg"
+			href="/favicon-light.svg"
 		/>
-		<link rel="shortcut icon" href="/assets/favicon/favicon.ico" />
-		<link
-			rel="apple-touch-icon"
-			sizes="180x180"
-			href="/assets/favicon/apple-touch-icon.png"
-		/>
-		<meta name="apple-mobile-web-app-title" content="gwood.dev" />
-		<link rel="manifest" href="/assets/favicon/site.webmanifest" />
 
 		<script data-cfasync="false">
 			(() => {
@@ -45,10 +32,15 @@
 				};
 				const storedTheme = getStoredTheme();
 				const theme = storedTheme || 'auto';
+				const targetTheme = getTargetTheme(theme);
 				document.documentElement.setAttribute(
 					'data-bs-theme',
-					getTargetTheme(theme)
+					targetTheme
 				);
+				const favicon = document.getElementById('favicon');
+				if (favicon) {
+					favicon.href = `/favicon-${targetTheme}.svg`;
+				}
 			})();
 		</script>
 
@@ -60,9 +52,9 @@
 		/>
 	</head>
 
-	<body>
-		<main class="container d-flex flex-column min-vh-100">
-			<div class="row justify-content-center mt-4">
+	<body class="d-flex flex-column min-vh-100">
+		<header class="container mt-4">
+			<div class="row justify-content-center">
 				<div class="col-auto">
 					<nav
 						class="d-flex gap-3 flex-wrap justify-content-center align-items-center"
@@ -74,138 +66,118 @@
 							class="text-decoration-none text-reset fw-bold"
 							>George O. Wood</a
 						>
-						<div class="btn-group dropdown">
-							<button
-								id="bd-theme"
-								class="btn btn-outline-primary btn-sm dropdown-toggle"
-								type="button"
-								data-bs-toggle="dropdown"
-								aria-expanded="false"
-							>
-								<svg class="bi" role="img">
-									<use
-										href="/icons.svg#bi-hexagon-half"
-									></use>
-								</svg>
-							</button>
-							<ul class="dropdown-menu">
-								<li>
-									<a
-										class="dropdown-item"
-										data-bs-theme-value="light"
-									>
-										<svg class="bi me-2" role="img">
-											<use
-												href="/icons.svg#bi-hexagon"
-											></use>
-										</svg>
-										Light
-									</a>
-								</li>
-								<li>
-									<a
-										class="dropdown-item"
-										data-bs-theme-value="dark"
-									>
-										<svg class="bi me-2" role="img">
-											<use
-												href="/icons.svg#bi-hexagon-fill"
-											></use>
-										</svg>
-										Dark
-									</a>
-								</li>
-								<li>
-									<a
-										class="dropdown-item"
-										data-bs-theme-value="auto"
-									>
-										<svg class="bi me-2" role="img">
-											<use
-												href="/icons.svg#bi-hexagon-half"
-											></use>
-										</svg>
-										Auto
-									</a>
-								</li>
-							</ul>
-						</div>
 					</nav>
 				</div>
 			</div>
+		</header>
 
-			<div class="flex-grow-1 mt-5">
-				<div class="row justify-content-center">
-					<div class="col-lg-8">
-						<h1 class="display-5 text-center mb-4">Blog</h1>
-						<div class="text-center mb-5">
-							<a href="/" class="text-decoration-none">
-								&larr; Go back home
-							</a>
-						</div>
-						<div class="list-group list-group-flush">
-							{{content}}
-						</div>
+		<main class="flex-grow-1 mt-5 container">
+			<div class="row justify-content-center">
+				<div class="col-lg-8">
+					<h1 class="display-5 text-center mb-4">Blog</h1>
+					<div class="text-center mb-5">
+						<a href="/" class="text-decoration-none">
+							&larr; Go back home
+						</a>
 					</div>
-				</div>
-			</div>
-
-			<div class="container text-center mt-auto pb-3">
-				<div class="row justify-content-center">
-					<div class="col">
-						<footer>
-							<p>
-								<small>
-									<a href="https://gwood.dev">gwood.dev</a>
-									&copy; 2026 by
-									<a
-										href="mailto:hello@gwood.dev?subject=Source:%20Website%20Footer"
-										>George O. Wood</a
-									>
-									is licensed under
-									<a
-										href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
-										target="_blank"
-										rel="noopener noreferrer"
-										>CC BY-NC-SA 4.0</a
-									><br />
-									<span class="d-inline-flex flex-wrap gap-1">
-										<img
-											src="https://mirrors.creativecommons.org/presskit/icons/cc.svg"
-											class="cc-icon"
-											alt="A small, white circle with the letters 'CC' inside it in black."
-											data-bs-toggle="tooltip"
-											data-bs-title="Creative Commons"
-										/>
-										<img
-											src="https://mirrors.creativecommons.org/presskit/icons/by.svg"
-											class="cc-icon"
-											alt="A small, white circle with a black silhouette of a person inside it."
-											data-bs-toggle="tooltip"
-											data-bs-title="Attribution"
-										/>
-										<img
-											src="https://mirrors.creativecommons.org/presskit/icons/nc.svg"
-											class="cc-icon"
-											alt="A small, white circle with a black dollar sign inside it, and with a diagonal black line crossing through it."
-											data-bs-toggle="tooltip"
-											data-bs-title="NonCommercial"
-										/>
-										<img
-											src="https://mirrors.creativecommons.org/presskit/icons/sa.svg"
-											class="cc-icon"
-											alt="A small, white circle with a black circular arrow oriented anticlockwise inside it."
-											data-bs-toggle="tooltip"
-											data-bs-title="ShareAlike"
-										/>
-									</span>
-								</small>
-							</p>
-						</footer>
-					</div>
+					<div class="list-group list-group-flush">{{content}}</div>
 				</div>
 			</div>
 		</main>
+
+		<div class="btn-group dropstart m-3 theme-switcher">
+			<button
+				id="bd-theme"
+				class="btn btn-outline-primary btn-sm dropdown-toggle"
+				type="button"
+				data-bs-toggle="dropdown"
+				aria-expanded="false"
+			>
+				<svg class="bi" role="img">
+					<use href="/icons.svg#bi-hexagon-half"></use>
+				</svg>
+			</button>
+			<ul class="dropdown-menu">
+				<li>
+					<a class="dropdown-item" data-bs-theme-value="light">
+						<svg class="bi me-2" role="img">
+							<use href="/icons.svg#bi-hexagon"></use>
+						</svg>
+						Light
+					</a>
+				</li>
+				<li>
+					<a class="dropdown-item" data-bs-theme-value="dark">
+						<svg class="bi me-2" role="img">
+							<use href="/icons.svg#bi-hexagon-fill"></use>
+						</svg>
+						Dark
+					</a>
+				</li>
+				<li>
+					<a class="dropdown-item" data-bs-theme-value="auto">
+						<svg class="bi me-2" role="img">
+							<use href="/icons.svg#bi-hexagon-half"></use>
+						</svg>
+						Auto
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<footer class="container text-center mt-auto pb-3">
+			<div class="row justify-content-center">
+				<div class="col">
+					<p class="mb-0">
+						<small>
+							<a href="https://gwood.dev">gwood.dev</a>
+							&copy; 2026 by
+							<a
+								href="mailto:hello@gwood.dev?subject=Source:%20Website%20Footer"
+								>George O. Wood</a
+							>
+							is licensed under
+							<a
+								href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+								target="_blank"
+								rel="noopener noreferrer"
+								>CC BY-NC-SA 4.0</a
+							><br />
+							<span class="d-inline-flex flex-wrap gap-1">
+								<img
+									src="https://mirrors.creativecommons.org/presskit/icons/cc.svg"
+									class="cc-icon"
+									alt="A small, white circle with the letters 'CC' inside it in black."
+									data-bs-toggle="tooltip"
+									data-bs-title="Creative Commons"
+								/>
+								<img
+									src="https://mirrors.creativecommons.org/presskit/icons/by.svg"
+									class="cc-icon"
+									alt="A small, white circle with a black silhouette of a person inside it."
+									data-bs-toggle="tooltip"
+									data-bs-title="Attribution"
+								/>
+								<img
+									src="https://mirrors.creativecommons.org/presskit/icons/nc.svg"
+									class="cc-icon"
+									alt="A small, white circle with a black dollar sign inside it, and with a diagonal black line crossing through it."
+									data-bs-toggle="tooltip"
+									data-bs-title="NonCommercial"
+								/>
+								<img
+									src="https://mirrors.creativecommons.org/presskit/icons/sa.svg"
+									class="cc-icon"
+									alt="A small, white circle with a black circular arrow oriented anticlockwise inside it."
+									data-bs-toggle="tooltip"
+									data-bs-title="ShareAlike"
+								/>
+							</span>
+						</small>
+					</p>
+				</div>
+			</div>
+		</footer>
 
 		<script type="module" src="/src/ts/main.ts"></script>
 	</body>
