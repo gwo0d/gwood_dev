@@ -2,117 +2,86 @@ import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
 import viteCompression from 'vite-plugin-compression';
-import { createHash } from 'crypto';
+import { randomBytes } from 'crypto';
 import fs from 'fs';
 import { load } from 'cheerio';
-import { minify } from 'html-minifier-terser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Custom plugin to minify HTML and generate CSP hash for the inline script
-const cspPlugin = ({ minifyHtml }: { minifyHtml: boolean }) => {
+// Custom plugin to inject nonces and generate CSP headers
+const nonceCspPlugin = () => {
+	const nonce = randomBytes(16).toString('base64');
+
 	return {
-		name: 'csp-hash-plugin',
-		async transformIndexHtml(html: string) {
-			// Minify HTML if in production
-			if (minifyHtml) {
-				const minifiedHtml = await minify(html, {
-					collapseWhitespace: true,
-					removeComments: true,
-					minifyJS: true,
-					minifyCSS: true,
-				});
-				return minifiedHtml;
-			}
-			return html;
+		name: 'nonce-csp-plugin',
+		transformIndexHtml(html: string) {
+			const $ = load(html);
+			$('script, style').attr('nonce', nonce);
+			return $.html();
 		},
 		closeBundle() {
-			// Generate _headers with the SHA-256 hashes of the inline scripts
 			try {
-				const distDir = resolve(__dirname, 'dist');
-				if (!fs.existsSync(distDir)) {
-					console.warn(
-						'[csp-hash-plugin] dist directory not found, skipping CSP generation.'
-					);
-					return;
-				}
-
-				const getHtmlFiles = (dir: string): string[] => {
-					let results: string[] = [];
-					const list = fs.readdirSync(dir);
-					list.forEach((file) => {
-						const filePath = resolve(dir, file);
-						const stat = fs.statSync(filePath);
-						if (stat && stat.isDirectory()) {
-							results = results.concat(getHtmlFiles(filePath));
-						} else if (file.endsWith('.html')) {
-							results.push(filePath);
-						}
-					});
-					return results;
-				};
-
-				const htmlFiles = getHtmlFiles(distDir);
-				const hashes = new Set<string>();
-
-				htmlFiles.forEach((filePath) => {
-					const html = fs.readFileSync(filePath, 'utf-8');
-					const $ = load(html);
-					$('script[data-cfasync="false"]').each((_, el) => {
-						const scriptContent = $(el).html();
-						if (scriptContent) {
-							const hash = createHash('sha256')
-								.update(scriptContent)
-								.digest('base64');
-							hashes.add(`'sha256-${hash}'`);
-						}
-					});
-				});
-
-				if (hashes.size === 0) {
-					console.warn(
-						'[csp-hash-plugin] No target inline scripts found.'
-					);
-					return;
-				}
-
-				const publicHeadersPath = resolve(__dirname, 'public/_headers');
+				const publicHeadersPath = resolve(
+					__dirname,
+					'public/_headers.template'
+				);
 				if (!fs.existsSync(publicHeadersPath)) {
 					console.warn(
-						'[csp-hash-plugin] public/_headers not found.'
+						'[nonce-csp-plugin] public/_headers.template not found.'
 					);
 					return;
 				}
 
 				const content = fs.readFileSync(publicHeadersPath, 'utf-8');
-				const hashString = Array.from(hashes).join(' ');
-
-				// Replace CSP: remove 'unsafe-inline' and add the hashes
 				const newContent = content.replace(
-					/'unsafe-inline'/g,
-					(match, offset, string) => {
-						// Only replace if it's part of script-src
-						const lineStart = string.lastIndexOf('\n', offset) + 1;
-						const line = string.substring(
-							lineStart,
-							string.indexOf('\n', offset)
+					/Content-Security-Policy:(.*)/g,
+					(match, cspValue) => {
+						const directives = cspValue
+							.split(';')
+							.map((d: string) => d.trim())
+							.filter((d: string) => d.length > 0);
+
+						const newDirectives = directives.map((directive: string) => {
+							if (directive.startsWith('script-src')) {
+								return `${directive} 'nonce-${nonce}'`;
+							}
+							if (directive.startsWith('style-src')) {
+								// Check if it's strictly 'style-src' and not 'style-src-attr'
+								// verify by checking the directive name
+								const parts = directive.split(/\s+/);
+								if (parts[0] === 'style-src') {
+									return `${directive} 'nonce-${nonce}'`;
+								}
+							}
+							return directive;
+						});
+
+						// Ensure style-src-attr 'unsafe-inline' exists
+						const hasStyleSrcAttr = newDirectives.some((d: string) =>
+							d.startsWith('style-src-attr')
 						);
-						if (line.includes('script-src')) {
-							return hashString;
+						if (!hasStyleSrcAttr) {
+							newDirectives.push("style-src-attr 'unsafe-inline'");
 						}
-						return match;
+
+						return `Content-Security-Policy: ${newDirectives.join('; ')}`;
 					}
 				);
 
-				const distHeadersPath = resolve(__dirname, 'dist/_headers');
+				const distDir = resolve(__dirname, 'dist');
+				if (!fs.existsSync(distDir)) {
+					fs.mkdirSync(distDir, { recursive: true });
+				}
+
+				const distHeadersPath = resolve(distDir, '_headers');
 				fs.writeFileSync(distHeadersPath, newContent);
 				console.log(
-					`[csp-hash-plugin] Generated _headers with ${hashes.size} unique hashes.`
+					`[nonce-csp-plugin] Generated _headers with nonce: ${nonce}`
 				);
 			} catch (e) {
 				console.error(
-					'[csp-hash-plugin] Failed to generate _headers:',
+					'[nonce-csp-plugin] Failed to generate _headers:',
 					e
 				);
 			}
@@ -140,7 +109,8 @@ const getHtmlEntries = (rootDir: string) => {
 };
 
 export default defineConfig(({ mode }) => {
-	const isProduction = mode === 'production';
+	// const isProduction = mode === 'production';
+    // HTML minification removed as per request
 	return {
 		root: '.', // root is current directory
 		build: {
@@ -152,7 +122,7 @@ export default defineConfig(({ mode }) => {
 			},
 		},
 		plugins: [
-			cspPlugin({ minifyHtml: isProduction }),
+			nonceCspPlugin(),
 			viteCompression({
 				algorithm: 'gzip',
 				ext: '.gz',
