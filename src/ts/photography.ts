@@ -130,7 +130,7 @@ export async function fetchPhotoPostsPage(params?: {
 		const posts = res.data.posts as AppBskyFeedDefs.PostView[];
 
 		const photoPosts: PhotoPost[] = [];
-		for (const post of posts) {
+		for (const post of posts || []) {
 			const photoPost = toPhotoPost(post);
 			if (photoPost.images.length > 0) {
 				photoPosts.push(photoPost);
