@@ -34,21 +34,20 @@ function isPostRecord(value: unknown): value is AppBskyFeedPost.Record {
 	);
 }
 
+const isImagesEmbed = (value: unknown): value is AppBskyEmbedImages.View =>
+	(value as AppBskyEmbedImages.View)?.$type === 'app.bsky.embed.images#view';
+
+const isRecordWithMedia = (
+	value: unknown
+): value is AppBskyEmbedRecordWithMedia.View =>
+	(value as AppBskyEmbedRecordWithMedia.View)?.$type ===
+	'app.bsky.embed.recordWithMedia#view';
+
 function extractImagesFromPost(post: AppBskyFeedDefs.PostView): PhotoImage[] {
 	const out: PhotoImage[] = [];
 	const embed = post.embed;
 
 	if (!embed) return out;
-
-	const isImagesEmbed = (value: unknown): value is AppBskyEmbedImages.View =>
-		(value as AppBskyEmbedImages.View)?.$type ===
-		'app.bsky.embed.images#view';
-
-	const isRecordWithMedia = (
-		value: unknown
-	): value is AppBskyEmbedRecordWithMedia.View =>
-		(value as AppBskyEmbedRecordWithMedia.View)?.$type ===
-		'app.bsky.embed.recordWithMedia#view';
 
 	// Direct images
 	if (isImagesEmbed(embed)) {
