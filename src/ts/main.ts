@@ -40,9 +40,20 @@ document.addEventListener('show.bs.modal', (e) => {
 	}
 });
 
-// Enable Tooltips
-document
-	.querySelectorAll<HTMLElement>('[data-bs-toggle="tooltip"]')
-	.forEach((tooltip) => {
-		new Tooltip(tooltip);
-	});
+// Enable Tooltips (Lazy Initialization)
+const initTooltip = (event: Event) => {
+	const target = event.target as Element;
+	if (!target || !target.closest) return;
+
+	const tooltipTarget = target.closest(
+		'[data-bs-toggle="tooltip"]'
+	) as HTMLElement;
+
+	if (tooltipTarget && !Tooltip.getInstance(tooltipTarget)) {
+		const tooltip = new Tooltip(tooltipTarget);
+		tooltip.show();
+	}
+};
+
+document.body.addEventListener('mouseover', initTooltip);
+document.body.addEventListener('focusin', initTooltip);
