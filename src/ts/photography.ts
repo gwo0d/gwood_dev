@@ -129,9 +129,13 @@ export async function fetchPhotoPostsPage(params?: {
 		if (!res.success) throw new Error('Error fetching Bluesky posts.');
 		const posts = res.data.posts as AppBskyFeedDefs.PostView[];
 
-		const photoPosts = posts
-			.map(toPhotoPost)
-			.filter((p) => p.images.length > 0);
+		const photoPosts: PhotoPost[] = [];
+		for (const post of posts || []) {
+			const photoPost = toPhotoPost(post);
+			if (photoPost.images.length > 0) {
+				photoPosts.push(photoPost);
+			}
+		}
 
 		return {
 			cursor: res.data.cursor,
