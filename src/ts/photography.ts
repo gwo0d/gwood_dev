@@ -192,6 +192,10 @@ function renderGallery(photos: PhotoPost[]) {
 
 	const frag = document.createDocumentFragment();
 	for (const post of photos) {
+		// Open the original post on BlueSky when activated
+		const postId = post.postUri.split('/').pop();
+		const bskyUrl = `https://bsky.app/profile/${post.authorHandle}/post/${postId}`;
+
 		for (const img of post.images) {
 			const col = document.createElement('div');
 			col.className = 'col';
@@ -214,9 +218,6 @@ function renderGallery(photos: PhotoPost[]) {
 				img.alt?.trim() || post.text?.trim() || 'Open post on BlueSky';
 			overlay.setAttribute('aria-label', ariaLabel);
 
-			// Open the original post on BlueSky when activated
-			const postId = post.postUri.split('/').pop();
-			const bskyUrl = `https://bsky.app/profile/${post.authorHandle}/post/${postId}`;
 			overlay.setAttribute('data-bsky-url', bskyUrl);
 
 			figure.appendChild(overlay);
