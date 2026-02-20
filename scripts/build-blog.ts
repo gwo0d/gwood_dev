@@ -53,8 +53,6 @@ async function buildBlog() {
 			console.log('No blog posts found.');
 		}
 
-		const posts: BlogPost[] = [];
-
 		// Load templates
 		let postTemplate = '';
 		let indexTemplate = '';
@@ -73,14 +71,14 @@ async function buildBlog() {
 			);
 		}
 
-		for (const file of mdFiles) {
+		const postPromises = mdFiles.map(async (file) => {
 			const filePath = path.join(CONTENT_DIR, file);
 			let fileContent = '';
 			try {
 				fileContent = await fs.readFile(filePath, 'utf-8');
 			} catch (e) {
 				console.error(`Failed to read file ${file}:`, e);
-				continue;
+				return null;
 			}
 
 			const { data, content } = matter(fileContent);
@@ -88,15 +86,15 @@ async function buildBlog() {
 			// Validation
 			if (!data.title) {
 				console.warn(`Skipping ${file}: Missing title in frontmatter.`);
-				continue;
+				return null;
 			}
 			if (!data.date) {
 				console.warn(`Skipping ${file}: Missing date in frontmatter.`);
-				continue;
+				return null;
 			}
 			if (!isValidDate(data.date)) {
 				console.warn(`Skipping ${file}: Invalid date format.`);
-				continue;
+				return null;
 			}
 
 			const slug = file.replace('.md', '');
@@ -104,13 +102,13 @@ async function buildBlog() {
 
 			const formattedDate = formatDate(data.date);
 
-			posts.push({
+			const post: BlogPost = {
 				slug,
 				title: data.title,
 				date: formattedDate,
 				description: data.description || '',
 				content: htmlContent as string,
-			});
+			};
 
 			// Generate individual post page
 			const postHtml = postTemplate
@@ -121,7 +119,11 @@ async function buildBlog() {
 
 			await fs.writeFile(path.join(OUTPUT_DIR, `${slug}.html`), postHtml);
 			console.log(`Generated blog/${slug}.html`);
-		}
+			return post;
+		});
+
+		const results = await Promise.all(postPromises);
+		const posts = results.filter((post): post is BlogPost => post !== null);
 
 		// Sort posts by date (newest first)
 		posts.sort(
