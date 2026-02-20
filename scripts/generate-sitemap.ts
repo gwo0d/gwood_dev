@@ -48,13 +48,17 @@ async function generateSitemap() {
 			const files = await fs.readdir(CONTENT_DIR);
 			const mdFiles = files.filter((file) => file.endsWith('.md'));
 
-			for (const file of mdFiles) {
-				const filePath = path.join(CONTENT_DIR, file);
-				const fileContent = await fs.readFile(filePath, 'utf-8');
-				const { data } = matter(fileContent);
+			const blogPosts = await Promise.all(
+				mdFiles.map(async (file) => {
+					const filePath = path.join(CONTENT_DIR, file);
+					const fileContent = await fs.readFile(filePath, 'utf-8');
+					const { data } = matter(fileContent);
+					const slug = file.replace('.md', '');
+					return { slug, data };
+				})
+			);
 
-				const slug = file.replace('.md', '');
-
+			for (const { slug, data } of blogPosts) {
 				if (data.date) {
 					let dateStr = data.date;
 					// Ensure date is in YYYY-MM-DD format if it's a Date object
