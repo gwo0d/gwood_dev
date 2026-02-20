@@ -24,27 +24,30 @@ const USED_ICONS = [
 	'arrow-left',
 ];
 
-async function generateSprite() {
+export async function generateSprite() {
 	console.log('Generating SVG sprite...');
-	const symbols: string[] = [];
 
-	for (const icon of USED_ICONS) {
+	const symbolPromises = USED_ICONS.map(async (icon) => {
 		const filePath = path.join(ICONS_DIR, `${icon}.svg`);
-		if (!fs.existsSync(filePath)) {
-			console.error(`Icon not found: ${icon}`);
-			continue;
+		try {
+			const content = await fs.promises.readFile(filePath, 'utf-8');
+			const $ = load(content, { xmlMode: true });
+			const svg = $('svg');
+			const viewBox = svg.attr('viewBox');
+			const innerContent = svg.html();
+
+			return `<symbol id="bi-${icon}" viewBox="${viewBox}">${innerContent}</symbol>`;
+		} catch (error) {
+			if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+				console.error(`Icon not found: ${icon}`);
+				return null;
+			}
+			throw error;
 		}
+	});
 
-		const content = fs.readFileSync(filePath, 'utf-8');
-		const $ = load(content, { xmlMode: true });
-		const svg = $('svg');
-		const viewBox = svg.attr('viewBox');
-		const innerContent = svg.html();
-
-		symbols.push(
-			`<symbol id="bi-${icon}" viewBox="${viewBox}">${innerContent}</symbol>`
-		);
-	}
+	const results = await Promise.all(symbolPromises);
+	const symbols = results.filter((s): s is string => s !== null);
 
 	const sprite = `<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
 	<defs>
@@ -52,10 +55,12 @@ async function generateSprite() {
 	</defs>
 </svg>`;
 
-	fs.writeFileSync(OUTPUT_FILE, sprite);
+	await fs.promises.writeFile(OUTPUT_FILE, sprite);
 	console.log(
 		`Sprite generated at ${OUTPUT_FILE} with ${symbols.length} icons.`
 	);
 }
 
-generateSprite();
+if (process.argv[1] === __filename) {
+	generateSprite();
+}
