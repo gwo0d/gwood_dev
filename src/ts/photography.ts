@@ -192,6 +192,14 @@ function renderGallery(photos: PhotoPost[]) {
 
 	const frag = document.createDocumentFragment();
 	for (const post of photos) {
+		// Dedup: Check if post is already rendered
+		// We use data-post-uri on the figure elements
+		// Since a post can have multiple images, we check if any figure has this URI
+		const existing = gallery.querySelector(
+			`.pp-tile[data-post-uri="${post.postUri}"]`
+		);
+		if (existing) continue;
+
 		// Open the original post on BlueSky when activated
 		const postId = post.postUri.split('/').pop();
 		const bskyUrl = `https://bsky.app/profile/${post.authorHandle}/post/${postId}`;
@@ -202,6 +210,7 @@ function renderGallery(photos: PhotoPost[]) {
 
 			const figure = document.createElement('figure');
 			figure.className = 'figure m-0 position-relative pp-tile';
+			figure.setAttribute('data-post-uri', post.postUri);
 
 			const image = document.createElement('img');
 			image.className = 'figure-img img-fluid rounded shadow-sm pp-img';
@@ -230,8 +239,11 @@ function renderGallery(photos: PhotoPost[]) {
 
 // Defer fetching until the modal is shown the first time
 let photosLoaded = false;
+let isLoading = false;
 async function ensurePhotosLoaded() {
-	if (photosLoaded) return;
+	if (photosLoaded || isLoading) return;
+	isLoading = true;
+
 	const status = document.getElementById('ppGalleryStatus');
 	if (status) status.classList.remove('visually-hidden');
 	try {
@@ -244,6 +256,8 @@ async function ensurePhotosLoaded() {
 			status.textContent = 'Failed to load photos.';
 		}
 		console.error(err);
+	} finally {
+		isLoading = false;
 	}
 }
 
