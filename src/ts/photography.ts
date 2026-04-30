@@ -191,14 +191,17 @@ function renderGallery(photos: PhotoPost[]) {
 	}
 
 	const frag = document.createDocumentFragment();
+
+	// Optimization: Extract existing post URIs into a Set for faster lookup
+	const renderedUris = new Set(
+		Array.from(gallery.querySelectorAll('.pp-tile')).map((el) =>
+			el.getAttribute('data-post-uri')
+		)
+	);
+
 	for (const post of photos) {
 		// Dedup: Check if post is already rendered
-		// We use data-post-uri on the figure elements
-		// Since a post can have multiple images, we check if any figure has this URI
-		const existing = gallery.querySelector(
-			`.pp-tile[data-post-uri="${post.postUri}"]`
-		);
-		if (existing) continue;
+		if (renderedUris.has(post.postUri)) continue;
 
 		// Open the original post on BlueSky when activated
 		const postId = post.postUri.split('/').pop();
