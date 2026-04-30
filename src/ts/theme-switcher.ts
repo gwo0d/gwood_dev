@@ -12,19 +12,27 @@ const STORAGE_KEY = 'theme';
 // Fallback memory store in case localStorage is unavailable (private mode, blocked, etc.)
 let memoryTheme: Theme | null = null;
 
+// Cache the theme to avoid repeated localStorage reads
+let cachedTheme: Theme | null | undefined = undefined;
+
 const isValidTheme = (value: unknown): value is Theme =>
 	value === 'light' || value === 'dark' || value === 'auto';
 
-const getStoredTheme = (): Theme | null => {
+export const getStoredTheme = (): Theme | null => {
+	if (cachedTheme !== undefined) {
+		return cachedTheme;
+	}
 	try {
 		const value = window.localStorage.getItem(STORAGE_KEY);
-		return isValidTheme(value) ? value : null;
+		cachedTheme = isValidTheme(value) ? value : null;
+		return cachedTheme;
 	} catch {
 		return memoryTheme;
 	}
 };
 
-const setStoredTheme = (theme: Theme): void => {
+export const setStoredTheme = (theme: Theme): void => {
+	cachedTheme = theme;
 	try {
 		window.localStorage.setItem(STORAGE_KEY, theme);
 	} catch {
@@ -168,6 +176,8 @@ export function initThemeSwitcher(): void {
 	// Sync across tabs/windows when localStorage changes
 	window.addEventListener('storage', (ev: StorageEvent) => {
 		if (ev.key !== STORAGE_KEY) return;
+		// Update cache when storage changes from another tab
+		cachedTheme = undefined; // clear the cache so the next read fetches fresh data
 		const next = isValidTheme(ev.newValue) ? ev.newValue : 'auto';
 		setTheme(next);
 		showActiveTheme(next);
