@@ -179,20 +179,19 @@ export function initThemeSwitcher(): void {
 		setTheme(currentTheme);
 		showActiveTheme(currentTheme);
 
-		document
-			.querySelectorAll<HTMLElement>('[data-bs-theme-value]')
-			.forEach((toggle) => {
-				toggle.addEventListener('click', () => {
-					const themeValue = toggle.getAttribute(
-						'data-bs-theme-value'
-					);
-					if (!isValidTheme(themeValue)) return;
-					const theme = themeValue as Theme;
-					setStoredTheme(theme);
-					setTheme(theme);
-					showActiveTheme(theme, true);
-				});
-			});
+		document.body.addEventListener('click', (event) => {
+			const toggle = (event.target as HTMLElement).closest<HTMLElement>(
+				'[data-bs-theme-value]'
+			);
+			if (!toggle) return;
+
+			const themeValue = toggle.getAttribute('data-bs-theme-value');
+			if (!isValidTheme(themeValue)) return;
+			const theme = themeValue as Theme;
+			setStoredTheme(theme);
+			setTheme(theme);
+			showActiveTheme(theme, true);
+		});
 	};
 
 	if (document.readyState === 'loading') {
