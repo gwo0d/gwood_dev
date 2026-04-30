@@ -7,6 +7,11 @@ const CONTENT_DIR = path.join(process.cwd(), 'src/content/blog');
 const TEMPLATE_DIR = path.join(process.cwd(), 'src/templates');
 const OUTPUT_DIR = path.join(process.cwd(), 'blog');
 
+const TITLE_REGEX = /{{title}}/g;
+const DATE_REGEX = /{{date}}/g;
+const DESCRIPTION_REGEX = /{{description}}/g;
+const CONTENT_PLACEHOLDER = '{{content}}';
+
 interface BlogPost {
 	slug: string;
 	title: string;
@@ -112,10 +117,10 @@ async function buildBlog() {
 
 			// Generate individual post page
 			const postHtml = postTemplate
-				.replace(/{{title}}/g, data.title)
-				.replace(/{{date}}/g, formattedDate)
-				.replace(/{{description}}/g, data.description || '')
-				.replace('{{content}}', htmlContent as string);
+				.replace(TITLE_REGEX, data.title)
+				.replace(DATE_REGEX, formattedDate)
+				.replace(DESCRIPTION_REGEX, data.description || '')
+				.replace(CONTENT_PLACEHOLDER, htmlContent as string);
 
 			await fs.writeFile(path.join(OUTPUT_DIR, `${slug}.html`), postHtml);
 			console.log(`Generated blog/${slug}.html`);
@@ -145,7 +150,7 @@ async function buildBlog() {
 			)
 			.join('\n');
 
-		const indexHtml = indexTemplate.replace('{{content}}', listItems);
+		const indexHtml = indexTemplate.replace(CONTENT_PLACEHOLDER, listItems);
 		await fs.writeFile(path.join(OUTPUT_DIR, 'index.html'), indexHtml);
 		console.log(`Generated blog/index.html`);
 
