@@ -90,6 +90,15 @@
 							<use href="/icons.svg#bi-image"></use></svg
 					></a>
 					<a
+						href="#"
+						class="icon"
+						data-bs-toggle="modal"
+						data-bs-target="#filmModal"
+						aria-label="Film Stock Comparison (modal on top of content)"
+						><svg class="bi" role="img">
+							<use href="/icons.svg#bi-film"></use></svg
+					></a>
+					<a
 						href="https://orcid.org/0009-0009-3998-6499"
 						class="icon"
 						target="_blank"
@@ -284,6 +293,57 @@
 				</div>
 			</div>
 		</div>
+		<div
+			class="modal fade"
+			id="filmModal"
+			tabindex="-1"
+			aria-labelledby="filmModalLabel"
+			aria-hidden="true"
+		>
+			<div class="modal-dialog modal-fullscreen">
+				<div class="modal-content">
+					<div class="modal-header flex-column align-items-stretch border-bottom-0 pb-0">
+						<div class="d-flex justify-content-between align-items-center mb-3">
+							<h4 class="modal-title" id="filmModalLabel">
+								Film Stock Comparison
+							</h4>
+							<button
+								type="button"
+								class="btn-close"
+								data-bs-dismiss="modal"
+								aria-label="Close"
+							></button>
+						</div>
+						<ul class="nav nav-pills flex-nowrap overflow-auto pb-2" id="filmStockTabs" role="tablist">
+							<!-- Stock pills will be dynamically generated here -->
+						</ul>
+					</div>
+					<div class="modal-body pt-3">
+						<div class="container-fluid">
+							<div
+								class="row justify-content-center text-primary"
+								id="filmGalleryStatus"
+							>
+								<div class="col-12 text-center">
+									<p class="mb-2">Select a film stock to begin.</p>
+								</div>
+							</div>
+							<div
+								id="filmGallery"
+								class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 mb-4"
+								aria-live="polite"
+							></div>
+							<div class="row text-center d-none" id="filmLoadMoreContainer">
+								<div class="col-12">
+									<button class="btn btn-outline-primary" id="filmLoadMoreBtn">Load More</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<script type="module" src="/src/ts/main.ts"></script>
 	</body>
 </html>

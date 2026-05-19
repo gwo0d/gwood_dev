@@ -16,6 +16,7 @@ const USED_ICONS = [
 	'bluesky',
 	'github',
 	'image',
+	'film',
 	'mortarboard-fill',
 	'download',
 	'hexagon',

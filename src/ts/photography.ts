@@ -11,13 +11,13 @@ const agent = new AtpAgent({ service: 'https://api.bsky.app' });
 export const BSKY_USERNAME = 'gwood.dev';
 export const PHOTO_QUERY = '\u{1F39E} | \u{1F4F7}';
 
-interface PhotoImage {
+export interface PhotoImage {
 	fullsize: string;
 	thumb?: string;
 	alt?: string;
 }
 
-interface PhotoPost {
+export interface PhotoPost {
 	postUri: string;
 	authorHandle: string;
 	text: string;
@@ -77,7 +77,7 @@ function extractImagesFromPost(post: AppBskyFeedDefs.PostView): PhotoImage[] {
 	return out;
 }
 
-function toPhotoPost(post: AppBskyFeedDefs.PostView): PhotoPost {
+export function toPhotoPost(post: AppBskyFeedDefs.PostView): PhotoPost {
 	let text = '';
 	let createdAt: string | undefined;
 
