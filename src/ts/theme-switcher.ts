@@ -38,10 +38,19 @@ const getPreferredTheme = (): Theme => {
 	return storedTheme ?? 'auto';
 };
 
+// Module-level cache for the dark mode media query to avoid redundant parsing.
+let cachedDarkThemeMq: MediaQueryList | null = null;
+
+const getDarkThemeMq = (): MediaQueryList | null => {
+	if (typeof window === 'undefined') return null;
+	if (!cachedDarkThemeMq) {
+		cachedDarkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
+	}
+	return cachedDarkThemeMq;
+};
+
 const getSystemTheme = (): Exclude<Theme, 'auto'> =>
-	window.matchMedia('(prefers-color-scheme: dark)').matches
-		? 'dark'
-		: 'light';
+	getDarkThemeMq()?.matches ? 'dark' : 'light';
 
 const setTheme = (theme: Theme): void => {
 	const target = theme === 'auto' ? getSystemTheme() : theme;
@@ -155,15 +164,13 @@ export function initThemeSwitcher(): void {
 	}
 
 	// Respond to OS theme changes only when using Auto (or when nothing explicit is stored).
-	window
-		.matchMedia('(prefers-color-scheme: dark)')
-		.addEventListener('change', () => {
-			const stored = getStoredTheme();
-			if (!stored || stored === 'auto') {
-				setTheme('auto');
-				showActiveTheme('auto');
-			}
-		});
+	getDarkThemeMq()?.addEventListener('change', () => {
+		const stored = getStoredTheme();
+		if (!stored || stored === 'auto') {
+			setTheme('auto');
+			showActiveTheme('auto');
+		}
+	});
 
 	// Sync across tabs/windows when localStorage changes
 	window.addEventListener('storage', (ev: StorageEvent) => {
