@@ -3,6 +3,7 @@
 /dist
 /docs*
 /.vscode
+/.claude/launch.json
 *.log
 blog/*.html
 public/icons.svg
