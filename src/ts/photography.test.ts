@@ -1,30 +1,11 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-// Use vi.hoisted to declare variables that need to be available in the mock factory
-const { searchPostsMock } = vi.hoisted(() => {
-	return { searchPostsMock: vi.fn() };
-});
-
-vi.mock('@atproto/api', () => {
-	return {
-		AtpAgent: class {
-			app = {
-				bsky: {
-					feed: {
-						searchPosts: searchPostsMock,
-					},
-				},
-			};
-		},
-	};
-});
-
-// Import AFTER mocking
 import { initPhotography } from './photography';
 
 describe('Photography Gallery', () => {
 	let modal: HTMLElement;
+	let fetchMock: ReturnType<typeof vi.fn>;
 
 	beforeEach(() => {
 		// Reset DOM
@@ -40,13 +21,15 @@ describe('Photography Gallery', () => {
     `;
 		modal = document.getElementById('ppModal')!;
 
-		// Reset Mocks
-		searchPostsMock.mockReset();
+		// Mock the global fetch used by the photography module
+		fetchMock = vi.fn();
+		vi.stubGlobal('fetch', fetchMock);
 		vi.useFakeTimers();
 	});
 
 	afterEach(() => {
 		vi.useRealTimers();
+		vi.unstubAllGlobals();
 		vi.restoreAllMocks();
 	});
 
@@ -57,7 +40,7 @@ describe('Photography Gallery', () => {
 			resolveSearch = resolve;
 		});
 
-		searchPostsMock.mockReturnValue(searchPromise);
+		fetchMock.mockReturnValue(searchPromise);
 
 		// Initialize the module
 		initPhotography();
@@ -76,10 +59,11 @@ describe('Photography Gallery', () => {
 		// Trigger 3 (via timer checkAndLoad)
 		vi.advanceTimersByTime(200);
 
-		// Resolve the promise now
+		// Resolve the promise now with a fetch Response-like object
 		resolveSearch!({
-			success: true,
-			data: {
+			ok: true,
+			status: 200,
+			json: async () => ({
 				posts: [
 					{
 						uri: 'at://did:plc:123/app.bsky.feed.post/1',
@@ -102,7 +86,7 @@ describe('Photography Gallery', () => {
 					},
 				],
 				cursor: undefined,
-			},
+			}),
 		});
 
 		// Wait for promise chain to resolve
@@ -112,8 +96,8 @@ describe('Photography Gallery', () => {
 
 		// Expectation: WITHOUT THE FIX, this should be called multiple times.
 		// WITH THE FIX, this should be called exactly once.
-		console.log(`Fetch called ${searchPostsMock.mock.calls.length} times`);
+		console.log(`Fetch called ${fetchMock.mock.calls.length} times`);
 
-		expect(searchPostsMock).toHaveBeenCalledTimes(1);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 });

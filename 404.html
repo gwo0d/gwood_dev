@@ -10,56 +10,12 @@
 
 		<link
 			rel="icon"
-			type="image/png"
-			href="/assets/favicon/favicon-96x96.png"
-			sizes="96x96"
-		/>
-		<link
-			rel="icon"
+			id="favicon"
 			type="image/svg+xml"
-			href="/assets/favicon/favicon.svg"
-		/>
-		<link rel="shortcut icon" href="/assets/favicon/favicon.ico" />
-		<link
-			rel="apple-touch-icon"
-			sizes="180x180"
-			href="/assets/favicon/apple-touch-icon.png"
-		/>
-		<meta name="apple-mobile-web-app-title" content="gwood.dev" />
-
-		<script data-cfasync="false">
-			(() => {
-				const getStoredTheme = () => {
-					try {
-						return window.localStorage.getItem('theme');
-					} catch {
-						return null;
-					}
-				};
-				const getTargetTheme = (theme) => {
-					if (theme === 'dark' || theme === 'light') return theme;
-					return window.matchMedia('(prefers-color-scheme: dark)')
-						.matches
-						? 'dark'
-						: 'light';
-				};
-				const storedTheme = getStoredTheme();
-				const theme = storedTheme || 'auto';
-				document.documentElement.setAttribute(
-					'data-bs-theme',
-					getTargetTheme(theme)
-				);
-			})();
-		</script>
-
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Noto+Serif:ital,wdth,wght@0,62.5..100,100..900;1,62.5..100,100..900&display=swap"
-			rel="stylesheet"
+			href="/favicon-light.svg"
 		/>
 
-		<script type="module" src="/src/ts/main.ts"></script>
+		<script src="/theme-init.js" data-cfasync="false"></script>
 	</head>
 
 	<body>
@@ -80,5 +36,7 @@
 				</a>
 			</div>
 		</main>
+
+		<script type="module" src="/src/ts/main.ts"></script>
 	</body>
 </html>

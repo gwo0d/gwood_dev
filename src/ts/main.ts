@@ -1,3 +1,10 @@
+// Self-hosted fonts (replaces Google Fonts; woff2 subsets download on demand
+// via unicode-range, same as before but served first-party).
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import '@fontsource-variable/jetbrains-mono/wght-italic.css';
+import '@fontsource-variable/noto-serif/wght.css';
+import '@fontsource-variable/noto-serif/wght-italic.css';
+
 // Import Custom CSS
 import '../scss/styles.scss';
 
