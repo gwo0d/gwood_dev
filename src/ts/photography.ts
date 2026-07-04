@@ -1,15 +1,42 @@
-import {
-	AtpAgent,
-	AppBskyFeedDefs,
-	AppBskyEmbedImages,
-	AppBskyEmbedRecordWithMedia,
-	AppBskyFeedPost,
-} from '@atproto/api';
-
-const agent = new AtpAgent({ service: 'https://api.bsky.app' });
-
+export const BSKY_API = 'https://api.bsky.app';
 export const BSKY_USERNAME = 'gwood.dev';
 export const PHOTO_QUERY = '\u{1F39E} | \u{1F4F7}';
+
+// Minimal shapes for the subset of the Bluesky app view API we consume.
+// We only read a handful of fields, so we avoid pulling in the full SDK.
+interface BskyImageView {
+	fullsize: string;
+	thumb?: string;
+	alt?: string;
+}
+
+interface BskyImagesEmbedView {
+	$type: 'app.bsky.embed.images#view';
+	images?: BskyImageView[];
+}
+
+interface BskyRecordWithMediaView {
+	$type: 'app.bsky.embed.recordWithMedia#view';
+	media?: unknown;
+}
+
+interface BskyPostRecord {
+	$type: 'app.bsky.feed.post';
+	text?: string;
+	createdAt?: string;
+}
+
+interface BskyPostView {
+	uri: string;
+	author: { handle: string };
+	record?: unknown;
+	embed?: unknown;
+}
+
+interface SearchPostsResponse {
+	cursor?: string;
+	posts?: BskyPostView[];
+}
 
 interface PhotoImage {
 	fullsize: string;
@@ -25,7 +52,33 @@ interface PhotoPost {
 	images: PhotoImage[];
 }
 
-function isPostRecord(value: unknown): value is AppBskyFeedPost.Record {
+// Call the public, unauthenticated searchPosts endpoint directly.
+async function searchPosts(params: {
+	q: string;
+	author: string;
+	limit: number;
+	sort: string;
+	cursor?: string;
+}): Promise<SearchPostsResponse> {
+	const url = new URL('/xrpc/app.bsky.feed.searchPosts', BSKY_API);
+	url.searchParams.set('q', params.q);
+	url.searchParams.set('author', params.author);
+	url.searchParams.set('limit', String(params.limit));
+	url.searchParams.set('sort', params.sort);
+	if (params.cursor) url.searchParams.set('cursor', params.cursor);
+
+	const res = await fetch(url, {
+		headers: { Accept: 'application/json' },
+	});
+
+	if (!res.ok) {
+		throw new Error(`Bluesky search failed with status ${res.status}`);
+	}
+
+	return (await res.json()) as SearchPostsResponse;
+}
+
+function isPostRecord(value: unknown): value is BskyPostRecord {
 	return (
 		typeof value === 'object' &&
 		value !== null &&
@@ -34,16 +87,14 @@ function isPostRecord(value: unknown): value is AppBskyFeedPost.Record {
 	);
 }
 
-const isImagesEmbed = (value: unknown): value is AppBskyEmbedImages.View =>
-	(value as AppBskyEmbedImages.View)?.$type === 'app.bsky.embed.images#view';
+const isImagesEmbed = (value: unknown): value is BskyImagesEmbedView =>
+	(value as BskyImagesEmbedView)?.$type === 'app.bsky.embed.images#view';
 
-const isRecordWithMedia = (
-	value: unknown
-): value is AppBskyEmbedRecordWithMedia.View =>
-	(value as AppBskyEmbedRecordWithMedia.View)?.$type ===
+const isRecordWithMedia = (value: unknown): value is BskyRecordWithMediaView =>
+	(value as BskyRecordWithMediaView)?.$type ===
 	'app.bsky.embed.recordWithMedia#view';
 
-function extractImagesFromPost(post: AppBskyFeedDefs.PostView): PhotoImage[] {
+function extractImagesFromPost(post: BskyPostView): PhotoImage[] {
 	const out: PhotoImage[] = [];
 	const embed = post.embed;
 
@@ -77,21 +128,15 @@ function extractImagesFromPost(post: AppBskyFeedDefs.PostView): PhotoImage[] {
 	return out;
 }
 
-function toPhotoPost(post: AppBskyFeedDefs.PostView): PhotoPost {
+function toPhotoPost(post: BskyPostView): PhotoPost {
 	let text = '';
 	let createdAt: string | undefined;
 
 	if (isPostRecord(post.record)) {
-		text = post.record.text;
+		text = post.record.text ?? '';
 		createdAt = post.record.createdAt;
 	} else {
-		// Fallback for when type check fails but it looks like a record (duck typing)
-		// or if strict checking fails, we just try to read properties safely if we must.
-		// However, adhering to the type guard is safer.
-		// Use partial type for loose casting if strict check fails?
-		// For now, let's assume if it's not a valid record type, we treat text as empty.
-		// But in reality, the API often returns records without $type explicitly set in some contexts?
-		// Actually, let's try a safer cast.
+		// Loose fallback for records that omit an explicit $type.
 		const record = post.record as
 			| { text?: string; createdAt?: string }
 			| undefined;
@@ -117,7 +162,7 @@ export async function fetchPhotoPostsPage(params?: {
 }) {
 	const limit = Math.min(Math.max(params?.pageSize ?? 60, 1), 100); // API cap: 100
 	try {
-		const res = await agent.app.bsky.feed.searchPosts({
+		const data = await searchPosts({
 			q: PHOTO_QUERY,
 			author: BSKY_USERNAME,
 			limit,
@@ -125,11 +170,10 @@ export async function fetchPhotoPostsPage(params?: {
 			cursor: params?.cursor,
 		});
 
-		if (!res.success) throw new Error('Error fetching Bluesky posts.');
-		const posts = res.data.posts as AppBskyFeedDefs.PostView[];
+		const posts = data.posts ?? [];
 
 		const photoPosts: PhotoPost[] = [];
-		for (const post of posts || []) {
+		for (const post of posts) {
 			const photoPost = toPhotoPost(post);
 			if (photoPost.images.length > 0) {
 				photoPosts.push(photoPost);
@@ -137,9 +181,9 @@ export async function fetchPhotoPostsPage(params?: {
 		}
 
 		return {
-			cursor: res.data.cursor,
+			cursor: data.cursor,
 			photoPosts,
-			raw: res.data,
+			rawCount: posts.length,
 		};
 	} catch (error) {
 		console.error('Failed to fetch posts page:', error);
@@ -154,7 +198,11 @@ export async function fetchPhotos(maxPhotos = 50) {
 
 	while (all.length < maxPhotos) {
 		try {
-			const { photoPosts, cursor: next } = await fetchPhotoPostsPage({
+			const {
+				photoPosts,
+				cursor: next,
+				rawCount,
+			} = await fetchPhotoPostsPage({
 				cursor,
 				// Optimization: Request max batch size (100) to reduce round-trips
 				pageSize: 100,
@@ -162,7 +210,10 @@ export async function fetchPhotos(maxPhotos = 50) {
 
 			all.push(...photoPosts);
 
-			if (!next || photoPosts.length === 0) break;
+			// Stop only when the API runs out of results (no cursor) or the
+			// page returned no posts at all. A page that contains posts but no
+			// images must NOT end the loop, or we would stop prematurely.
+			if (!next || rawCount === 0) break;
 			cursor = next;
 		} catch (error) {
 			console.error('Error in fetchPhotos loop:', error);

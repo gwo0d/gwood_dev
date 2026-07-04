@@ -14,42 +14,7 @@
 			href="/favicon-light.svg"
 		/>
 
-		<script data-cfasync="false">
-			(() => {
-				const getStoredTheme = () => {
-					try {
-						return window.localStorage.getItem('theme');
-					} catch {
-						return null;
-					}
-				};
-				const getTargetTheme = (theme) => {
-					if (theme === 'dark' || theme === 'light') return theme;
-					return window.matchMedia('(prefers-color-scheme: dark)')
-						.matches
-						? 'dark'
-						: 'light';
-				};
-				const storedTheme = getStoredTheme();
-				const theme = storedTheme || 'auto';
-				const targetTheme = getTargetTheme(theme);
-				document.documentElement.setAttribute(
-					'data-bs-theme',
-					targetTheme
-				);
-				const favicon = document.getElementById('favicon');
-				if (favicon) {
-					favicon.href = `/favicon-${targetTheme}.svg`;
-				}
-			})();
-		</script>
-
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Noto+Serif:ital,wdth,wght@0,62.5..100,100..900;1,62.5..100,100..900&display=swap"
-			rel="stylesheet"
-		/>
+		<script src="/theme-init.js" data-cfasync="false"></script>
 	</head>
 
 	<body class="d-flex flex-column min-vh-100 text-center">
@@ -133,15 +98,17 @@
 								stroke-linecap="round"
 							/></svg
 					></a>
-					<a
-						href="#"
+					<button
+						type="button"
 						class="icon"
 						data-bs-toggle="modal"
 						data-bs-target="#ppModal"
 						aria-label="Photography Portfolio (modal on top of content)"
-						><svg class="bi" role="img">
-							<use href="/icons.svg#bi-image"></use></svg
-					></a>
+					>
+						<svg class="bi" role="img">
+							<use href="/icons.svg#bi-image"></use>
+						</svg>
+					</button>
 					<a
 						href="https://orcid.org/0009-0009-3998-6499"
 						class="icon"
@@ -189,28 +156,40 @@
 			</button>
 			<ul class="dropdown-menu">
 				<li>
-					<a class="dropdown-item" data-bs-theme-value="light">
+					<button
+						type="button"
+						class="dropdown-item"
+						data-bs-theme-value="light"
+					>
 						<svg class="bi me-2" role="img">
 							<use href="/icons.svg#bi-hexagon"></use>
 						</svg>
 						Light
-					</a>
+					</button>
 				</li>
 				<li>
-					<a class="dropdown-item" data-bs-theme-value="dark">
+					<button
+						type="button"
+						class="dropdown-item"
+						data-bs-theme-value="dark"
+					>
 						<svg class="bi me-2" role="img">
 							<use href="/icons.svg#bi-hexagon-fill"></use>
 						</svg>
 						Dark
-					</a>
+					</button>
 				</li>
 				<li>
-					<a class="dropdown-item" data-bs-theme-value="auto">
+					<button
+						type="button"
+						class="dropdown-item"
+						data-bs-theme-value="auto"
+					>
 						<svg class="bi me-2" role="img">
 							<use href="/icons.svg#bi-hexagon-half"></use>
 						</svg>
 						Auto
-					</a>
+					</button>
 				</li>
 			</ul>
 		</div>

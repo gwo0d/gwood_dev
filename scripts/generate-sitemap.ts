@@ -20,59 +20,80 @@ interface SitemapUrl {
 	priority?: number;
 }
 
+function escapeXml(value: string): string {
+	return value
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&apos;');
+}
+
+function toDateString(date: unknown): string | undefined {
+	if (date instanceof Date) {
+		return date.toISOString().split('T')[0];
+	}
+	if (typeof date === 'string' && date.trim() !== '') {
+		return date;
+	}
+	return undefined;
+}
+
 async function generateSitemap() {
 	try {
 		console.log('Starting sitemap generation...');
 
-		const urls: SitemapUrl[] = [];
-		const today = new Date().toISOString().split('T')[0];
-
-		// Add homepage
-		urls.push({
-			loc: `${BASE_URL}/`,
-			lastmod: today,
-			changefreq: 'weekly',
-			priority: 1.0,
-		});
-
-		// Add blog index
-		urls.push({
-			loc: `${BASE_URL}/blog/`,
-			lastmod: today,
-			changefreq: 'weekly',
-			priority: 0.8,
-		});
-
-		// Read blog posts
+		// Read blog posts first so page-level lastmod values can be derived from
+		// real content dates rather than the build timestamp.
+		const blogPosts: { slug: string; date?: string }[] = [];
 		if (await fs.stat(CONTENT_DIR).catch(() => false)) {
 			const files = await fs.readdir(CONTENT_DIR);
 			const mdFiles = files.filter((file) => file.endsWith('.md'));
 
-			const blogPosts = await Promise.all(
+			const parsed = await Promise.all(
 				mdFiles.map(async (file) => {
 					const filePath = path.join(CONTENT_DIR, file);
 					const fileContent = await fs.readFile(filePath, 'utf-8');
 					const { data } = matter(fileContent);
 					const slug = file.replace('.md', '');
-					return { slug, data };
+					return { slug, date: toDateString(data.date) };
 				})
 			);
+			blogPosts.push(...parsed);
+		}
 
-			for (const { slug, data } of blogPosts) {
-				if (data.date) {
-					let dateStr = data.date;
-					// Ensure date is in YYYY-MM-DD format if it's a Date object
-					if (data.date instanceof Date) {
-						dateStr = data.date.toISOString().split('T')[0];
-					}
+		const postDates = blogPosts
+			.map((p) => p.date)
+			.filter((d): d is string => Boolean(d))
+			.sort();
+		const latestPostDate = postDates[postDates.length - 1];
 
-					urls.push({
-						loc: `${BASE_URL}/blog/${slug}`,
-						lastmod: dateStr,
-						changefreq: 'monthly',
-						priority: 0.6,
-					});
-				}
+		const urls: SitemapUrl[] = [];
+
+		// Homepage: static, so no reliable content-modification date to report.
+		urls.push({
+			loc: `${BASE_URL}/`,
+			changefreq: 'weekly',
+			priority: 1.0,
+		});
+
+		// Blog index changes when a new post is published, so date it from the
+		// most recent post.
+		urls.push({
+			loc: `${BASE_URL}/blog/`,
+			lastmod: latestPostDate,
+			changefreq: 'weekly',
+			priority: 0.8,
+		});
+
+		for (const { slug, date } of blogPosts) {
+			if (date) {
+				urls.push({
+					loc: `${BASE_URL}/blog/${encodeURIComponent(slug)}`,
+					lastmod: date,
+					changefreq: 'monthly',
+					priority: 0.6,
+				});
 			}
 		}
 
@@ -81,12 +102,13 @@ async function generateSitemap() {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls
 	.map((url) => {
-		return `	<url>
-		<loc>${url.loc}</loc>
-		<lastmod>${url.lastmod}</lastmod>
-		<changefreq>${url.changefreq}</changefreq>
-		<priority>${url.priority}</priority>
-	</url>`;
+		const parts = [`		<loc>${escapeXml(url.loc)}</loc>`];
+		if (url.lastmod) parts.push(`		<lastmod>${url.lastmod}</lastmod>`);
+		if (url.changefreq)
+			parts.push(`		<changefreq>${url.changefreq}</changefreq>`);
+		if (url.priority !== undefined)
+			parts.push(`		<priority>${url.priority}</priority>`);
+		return `	<url>\n${parts.join('\n')}\n	</url>`;
 	})
 	.join('\n')}
 </urlset>`;
