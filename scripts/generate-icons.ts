@@ -21,6 +21,7 @@ const USED_ICONS = [
 	'hexagon',
 	'hexagon-fill',
 	'hexagon-half',
+	'star-fill',
 	'arrow-left',
 ];
 

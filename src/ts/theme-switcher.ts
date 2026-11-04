@@ -5,7 +5,15 @@
  */
 
 // Define a type for the possible theme values for better type-checking.
-type Theme = 'light' | 'dark' | 'auto';
+// 'democratic' is a temporary celebration theme (see src/scss/_democratic.scss).
+export type Theme = 'light' | 'dark' | 'auto' | 'democratic';
+
+const THEMES: readonly Theme[] = ['light', 'dark', 'auto', 'democratic'];
+
+// The theme used when a visitor has not picked one. Temporarily set to the
+// celebration theme; change back to 'auto' to retire it, and keep this in
+// sync with DEFAULT_THEME in public/theme-init.js.
+export const DEFAULT_THEME: Theme = 'democratic';
 
 const STORAGE_KEY = 'theme';
 
@@ -16,7 +24,7 @@ let memoryTheme: Theme | null = null;
 let cachedTheme: Theme | null | undefined = undefined;
 
 const isValidTheme = (value: unknown): value is Theme =>
-	value === 'light' || value === 'dark' || value === 'auto';
+	THEMES.includes(value as Theme);
 
 export const getStoredTheme = (): Theme | null => {
 	if (cachedTheme !== undefined) {
@@ -40,10 +48,11 @@ export const setStoredTheme = (theme: Theme): void => {
 	}
 };
 
-// If nothing stored, prefer "auto" so the UI highlights Auto by default while honouring OS preference.
+// If nothing is stored, fall back to the site default (normally "auto", which
+// honours the OS preference).
 const getPreferredTheme = (): Theme => {
 	const storedTheme = getStoredTheme();
-	return storedTheme ?? 'auto';
+	return storedTheme ?? DEFAULT_THEME;
 };
 
 // Module-level cache for the dark mode media query to avoid redundant parsing.
@@ -107,7 +116,7 @@ const showActiveTheme = (theme: Theme, focus: boolean = false): void => {
 	const switcherBtn = cachedThemeSwitcherBtn;
 	const switcherIcon = cachedThemeSwitcherBtnIcon;
 
-	const themeSafe: Theme = isValidTheme(theme) ? theme : 'auto';
+	const themeSafe: Theme = isValidTheme(theme) ? theme : DEFAULT_THEME;
 	const btnToActivate = cachedThemeBtnMap.get(themeSafe);
 
 	if (!switcherBtn || !btnToActivate) return;
@@ -126,6 +135,7 @@ const showActiveTheme = (theme: Theme, focus: boolean = false): void => {
 			light: 'bi-hexagon',
 			dark: 'bi-hexagon-fill',
 			auto: 'bi-hexagon-half',
+			democratic: 'bi-star-fill',
 		};
 		const use = switcherIcon.querySelector('use');
 		if (use) {
@@ -144,6 +154,7 @@ const showActiveTheme = (theme: Theme, focus: boolean = false): void => {
 		light: 'Theme: Light',
 		dark: 'Theme: Dark',
 		auto: 'Theme: Auto (follows system)',
+		democratic: 'Theme: Democratic',
 	};
 	switcherBtn.setAttribute('aria-label', labelMap[themeSafe]);
 
@@ -171,10 +182,10 @@ export function initThemeSwitcher(): void {
 		return;
 	}
 
-	// Respond to OS theme changes only when using Auto (or when nothing explicit is stored).
+	// Respond to OS theme changes only when using Auto (chosen explicitly, or
+	// as the default when nothing is stored).
 	getDarkThemeMq()?.addEventListener('change', () => {
-		const stored = getStoredTheme();
-		if (!stored || stored === 'auto') {
+		if (getPreferredTheme() === 'auto') {
 			setTheme('auto');
 			showActiveTheme('auto');
 		}
@@ -185,7 +196,7 @@ export function initThemeSwitcher(): void {
 		if (ev.key !== STORAGE_KEY) return;
 		// Update cache when storage changes from another tab
 		cachedTheme = undefined; // clear the cache so the next read fetches fresh data
-		const next = isValidTheme(ev.newValue) ? ev.newValue : 'auto';
+		const next = isValidTheme(ev.newValue) ? ev.newValue : DEFAULT_THEME;
 		setTheme(next);
 		showActiveTheme(next);
 	});

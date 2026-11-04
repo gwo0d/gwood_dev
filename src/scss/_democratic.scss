@@ -1,0 +1,228 @@
+// "Democratic" celebration theme.
+//
+// A temporary, Easter-egg colour mode selectable from the theme switcher
+// (data-bs-theme="democratic"). The page reads as the flag's canton: a field
+// of white stars on Old Glory Blue, capped with the thirteen stripes, with a
+// ballot-paper theme menu as the nod to democracy.
+//
+// To retire it: remove the @import of this file from styles.scss, the
+// "democratic" entries in src/ts/theme-switcher.ts and public/theme-init.js,
+// the menu item in the HTML templates, the 'star-fill' icon and
+// public/favicon-democratic.svg.
+
+// Palette
+$dem-navy: #0a3161; // Old Glory Blue
+$dem-navy-deep: #061d3d;
+$dem-red: #b31942; // Old Glory Red
+$dem-white: #fff;
+$dem-blue: #9dc1ff; // A light blue that stays readable on the navy field
+$dem-code: #ff8fa3;
+$dem-paper: #fbf8ef;
+
+// Thirteen stripes, seven red and six white.
+$dem-stripe: 0.1875rem;
+$dem-stripes-height: $dem-stripe * 13;
+
+// A five-pointed star of radius 10 centred on the origin.
+$dem-star: '0,-10 2.245,-3.09 9.511,-3.09 3.633,1.18 5.878,8.09 0,3.82 -5.878,8.09 -3.633,1.18 -9.511,-3.09 -2.245,-3.09';
+
+// Staggered rows of stars, as on the canton.
+$dem-star-field: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='60' viewBox='0 0 72 60'><g fill='#{$dem-white}' fill-opacity='.22'><polygon transform='translate(18 15) scale(.45)' points='#{$dem-star}'/><polygon transform='translate(54 45) scale(.45)' points='#{$dem-star}'/></g></svg>");
+
+// A row of five stars to sit beneath the main heading.
+$dem-star-row: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20'><g fill='#{$dem-white}'><polygon transform='translate(20 10)' points='#{$dem-star}'/><polygon transform='translate(60 10)' points='#{$dem-star}'/><polygon transform='translate(100 10)' points='#{$dem-star}'/><polygon transform='translate(140 10)' points='#{$dem-star}'/><polygon transform='translate(180 10)' points='#{$dem-star}'/></g></svg>");
+
+@include color-mode(democratic, true) {
+	color-scheme: dark;
+
+	--#{$prefix}body-color: #{$dem-white};
+	--#{$prefix}body-color-rgb: #{to-rgb($dem-white)};
+	--#{$prefix}body-bg: #{$dem-navy};
+	--#{$prefix}body-bg-rgb: #{to-rgb($dem-navy)};
+
+	--#{$prefix}emphasis-color: #{$dem-white};
+	--#{$prefix}emphasis-color-rgb: #{to-rgb($dem-white)};
+
+	--#{$prefix}secondary-color: #{rgba($dem-white, 0.75)};
+	--#{$prefix}secondary-color-rgb: #{to-rgb($dem-white)};
+	--#{$prefix}secondary-bg: #{tint-color($dem-navy, 10%)};
+	--#{$prefix}secondary-bg-rgb: #{to-rgb(tint-color($dem-navy, 10%))};
+
+	--#{$prefix}tertiary-color: #{rgba($dem-white, 0.5)};
+	--#{$prefix}tertiary-color-rgb: #{to-rgb($dem-white)};
+	--#{$prefix}tertiary-bg: #{tint-color($dem-navy, 5%)};
+	--#{$prefix}tertiary-bg-rgb: #{to-rgb(tint-color($dem-navy, 5%))};
+
+	@each $color, $value in $theme-colors-text-dark {
+		--#{$prefix}#{$color}-text-emphasis: #{$value};
+	}
+
+	@each $color, $value in $theme-colors-bg-subtle-dark {
+		--#{$prefix}#{$color}-bg-subtle: #{$value};
+	}
+
+	@each $color, $value in $theme-colors-border-subtle-dark {
+		--#{$prefix}#{$color}-border-subtle: #{$value};
+	}
+
+	--#{$prefix}primary: #{$dem-blue};
+	--#{$prefix}primary-rgb: #{to-rgb($dem-blue)};
+	--#{$prefix}focus-ring-color: #{rgba($dem-blue, $focus-ring-opacity)};
+
+	--#{$prefix}heading-color: inherit;
+
+	--#{$prefix}link-color: #{$dem-blue};
+	--#{$prefix}link-hover-color: #{$dem-white};
+	--#{$prefix}link-color-rgb: #{to-rgb($dem-blue)};
+	--#{$prefix}link-hover-color-rgb: #{to-rgb($dem-white)};
+
+	--#{$prefix}code-color: #{$dem-code};
+	--#{$prefix}highlight-color: #{$dem-navy};
+	--#{$prefix}highlight-bg: #{$dem-paper};
+
+	--#{$prefix}border-color: #{rgba($dem-white, 0.2)};
+	--#{$prefix}border-color-translucent: #{rgba($dem-white, 0.15)};
+
+	@include btn-close-white();
+
+	::selection {
+		color: $dem-white;
+		background-color: $dem-red;
+	}
+
+	body {
+		background-color: $dem-navy;
+		// Fade the stars out behind the content so text stays crisp.
+		background-image:
+			radial-gradient(
+				ellipse at 50% 45%,
+				rgba($dem-navy, 0.95) 0%,
+				rgba($dem-navy, 0.75) 30%,
+				rgba($dem-navy, 0) 65%
+			),
+			linear-gradient(rgba($dem-navy, 0), rgba($dem-navy-deep, 0.6)),
+			escape-svg($dem-star-field);
+		background-size:
+			100% 100%,
+			100% 100%,
+			72px 60px;
+		background-repeat: no-repeat, no-repeat, repeat;
+
+		// The stripes, across the top of every page.
+		&::before {
+			content: '';
+			display: block;
+			flex: none;
+			height: $dem-stripes-height;
+			background: repeating-linear-gradient(
+				to bottom,
+				$dem-red 0 $dem-stripe,
+				$dem-white $dem-stripe ($dem-stripe * 2)
+			);
+		}
+
+		// Pages without a flex column body (e.g. the 404) get the stripes
+		// overlaid instead, so they don't push the layout past the viewport.
+		&:not(.d-flex)::before {
+			position: absolute;
+			top: 0;
+			right: 0;
+			left: 0;
+		}
+	}
+
+	// Keep the mobile theme switcher clear of the stripes.
+	.theme-switcher {
+		@include media-breakpoint-down(lg) {
+			top: $dem-stripes-height;
+		}
+	}
+
+	// Vintage campaign-poster headings: white with a red offset.
+	h1 {
+		text-shadow: 0.045em 0.045em 0 $dem-red;
+	}
+
+	.display-1::after {
+		content: '';
+		display: block;
+		height: 0.18em;
+		margin-top: 0.2em;
+		background: escape-svg($dem-star-row) center / contain no-repeat;
+	}
+
+	.btn-primary {
+		@include button-variant($dem-red, $dem-red);
+	}
+
+	.btn-outline-primary {
+		@include button-outline-variant($dem-blue);
+	}
+
+	#ppGallery .overlay {
+		background-color: $dem-red;
+	}
+
+	// The theme menu as a ballot paper: "Official ballot, vote for one", with
+	// an oval to fill in beside each option.
+	.theme-switcher .dropdown-menu {
+		--#{$prefix}dropdown-bg: #{$dem-paper};
+		--#{$prefix}dropdown-color: #{$dem-navy};
+		--#{$prefix}dropdown-border-color: #{$dem-navy};
+		--#{$prefix}dropdown-link-color: #{$dem-navy};
+		--#{$prefix}dropdown-link-hover-color: #{$dem-navy};
+		--#{$prefix}dropdown-link-hover-bg: #{rgba($dem-navy, 0.08)};
+		--#{$prefix}dropdown-link-active-color: #{$dem-navy};
+		--#{$prefix}dropdown-link-active-bg: #{rgba($dem-navy, 0.04)};
+		--#{$prefix}dropdown-divider-bg: #{rgba($dem-navy, 0.3)};
+		padding-top: 0;
+		overflow: hidden;
+		color-scheme: light;
+
+		&::before {
+			content: 'Official ballot · Vote for one';
+			// Decorative, so hidden from assistive technology where supported.
+			content: 'Official ballot · Vote for one' / '';
+			display: block;
+			margin-bottom: 0.5rem;
+			padding: 0.4rem 1rem;
+			border-bottom: 0.25rem solid $dem-red;
+			font-size: 0.7rem;
+			font-weight: 700;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			white-space: nowrap;
+			color: $dem-white;
+			background-color: $dem-navy;
+		}
+
+		// Icon, label, then the oval pushed to the right-hand edge.
+		.dropdown-item {
+			display: grid;
+			grid-template-columns: auto 1fr auto;
+			align-items: center;
+
+			&::after {
+				content: '';
+				width: 1.5em;
+				height: 0.8em;
+				margin-left: 1.5rem;
+				border: 2px solid currentColor;
+				border-radius: 50%;
+			}
+
+			&:hover::after,
+			&:focus-visible::after {
+				background-color: rgba($dem-navy, 0.25);
+			}
+
+			&.active {
+				font-weight: 700;
+
+				&::after {
+					background-color: currentColor;
+				}
+			}
+		}
+	}
+}
